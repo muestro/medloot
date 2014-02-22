@@ -1,0 +1,26 @@
+body{
+    margin: 0px;
+    padding: 0px;
+}
+
+.mainContent{
+    width: 1494px;
+}
+
+.leftContent{
+    display: inline-block;
+    /* border: 1px solid green; */
+}
+
+.rightContent{
+    /* float: right; */
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block;
+    /* border: 1px solid blue; */
+    vertical-align: top;
+}
+
+#adminContent li{
+    padding-bottom: 20px;
+}

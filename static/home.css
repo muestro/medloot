@@ -1,0 +1,88 @@
+body{
+    margin: 0px;
+    padding: 0px;
+    font-family: "open sans", sans-serif;
+}
+
+.topBanner{
+    vertical-align: bottom;
+    display: inline-block;
+/*    border: 1px solid red;  */
+    width: 100%;
+}
+
+.topBanner ul{
+    display: inline-block;
+    padding-left: 15px;
+    margin-bottom: 0px;
+    margin-top: 10px;
+}
+
+.topBanner li{
+    display: inline-block;
+    padding-right: 20px;
+}
+
+.topBannerRight{
+    display: inline-block;
+    float: right;
+    padding-right: 40px;
+}
+
+ul{
+    list-style: none;
+}
+
+#searchBar{
+    font-size: 20px;
+    color: black;
+    padding: 3px;
+    margin: 0px;
+    outline: 0px;
+    border: 1px solid #adadad;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    width: 100%;
+}
+
+#searchForm{
+    display: block;
+    position: relative;
+    width: 425px;
+    margin: 0px auto;
+    z-index: 1;
+    padding: 0px;
+    color: #ccc;
+}
+
+#searchIcon{
+    display:block;
+    width: 24px;
+    height:24px;
+    background:url('/static/search_icon.gif') 4px 4px no-repeat;
+    position: absolute;
+    right: -3px;
+    top: 4px;
+    color: #FFD100;
+    cursor: pointer;
+    outline: none;
+    text-decoration: underline;
+    text-align: center;
+}
+
+.splash{
+    color: #333333;
+    display: block;
+    font-family: 'Russo One', sans-serif;
+    font-size: 48px;
+    text-align: center;
+}
+
+.miniSplash{
+    color: #333333;
+    display: inline-block;
+    font-family: 'Russo One', sans-serif;
+    font-size: 26px;
+    text-decoration: none;
+}

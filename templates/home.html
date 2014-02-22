@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medloot.com - Search</title>
+    <link type="text/css" rel="stylesheet" href="/static/home.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="/static/home.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<div class="topBanner">
+    <ul>
+        <li></li>
+    </ul>
+    <ul class="topBannerRight">
+        <li>
+            {% if is_admin_user %}
+            <a href="/admin">Admin</a>
+            {% endif %}
+        </li>
+    </ul>
+</div>
+<div align="center" style="width:100%">
+    <h1 class="splash">MedLoot.com</h1>
+</div>
+<form id="searchForm" onsubmit="return false">
+    <input id="searchBar" type="text" autofocus="autofocus"/>
+    <a id="searchIcon"></a>
+</form>
+</body>
+</html>

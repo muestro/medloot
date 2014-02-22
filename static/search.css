@@ -1,0 +1,32 @@
+.topBanner{
+    background: #f1f1f1;
+    padding-bottom: 10px;
+}
+
+#resultTable{
+    border-collapse: collapse;
+    margin-left: 40px;
+}
+
+#resultTable th{
+    background-color: #5f5f5f;
+    color: white;
+}
+
+#resultTable td, th{
+    border-bottom: 1px solid #999;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.boxBorder{
+    border: 1px solid #999;
+}
+
+.displayRow{
+    display: none;
+}
+
+#resultTable textarea{
+    border: 0px;
+}
