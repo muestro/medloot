@@ -9,8 +9,23 @@ $(document).ready(function(){
         });
     });
 
+    $('#addAdminButton').click(function(){
+        $('#addAdminButton').prop( "disabled", true );
+        var data = {};
+        data['alias'] = $('#addAdminAlias').val();
+        data['email'] = $('#addAdminEmail').val();
+        $.post('/admin/addadmin', data, function(){
+            setTimeout(function(){
+                location.reload();
+            }, 500);
+        })
+        .fail(function(){
+            alert('Failed to add Admin.');
+        });
+    });
+
     $('#doParse').click(function(){
-        var data = {}
+        var data = {};
         data['input'] = $('#input').val();
 
         // get xml and display it

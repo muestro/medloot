@@ -24,3 +24,7 @@ body{
 #adminContent li{
     padding-bottom: 20px;
 }
+
+#adminContent div{
+    margin-left: 40px;
+}

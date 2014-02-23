@@ -1,12 +1,13 @@
 import webapp2
 import jinja2
 import os
-import test
+import time
 from google.appengine.api import users
 from collections import defaultdict
 import medievia.parse
 import medievia.item
 import medievia.search
+import medievia.admin
 jinja_environment = jinja2.Environment(autoescape=True,
                                        loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__))))
 
@@ -19,7 +20,7 @@ class HomeHandler(webapp2.RequestHandler):
     def get(self):
         template = jinja_environment.get_template('templates/home.html')
         template_values = {
-            'is_admin_user': users.is_current_user_admin()
+            'is_admin_user': is_admin_user()
         }
         self.response.out.write(template.render(template_values))
 
@@ -33,7 +34,7 @@ class SearchHandler(webapp2.RequestHandler):
         # flat list
         if self.request.get('style') == 'flatlist':
             template_values = {
-                'is_admin_user': users.is_current_user_admin(),
+                'is_admin_user': is_admin_user(),
                 'items': items,
                 'query': query
             }
@@ -46,7 +47,7 @@ class SearchHandler(webapp2.RequestHandler):
                 grouped_items[item.name].append(item)
             #grouped_items = {item.name: item for item in items}
             template_values = {
-                'is_admin_user': users.is_current_user_admin(),
+                'is_admin_user': is_admin_user,
                 'grouped_items': grouped_items,
                 'query': query
             }
@@ -55,46 +56,89 @@ class SearchHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(template_values))
 
 
-class ParseHandler(webapp2.RedirectHandler):
-    def get(self):
-        template = jinja_environment.get_template('templates/parse.html')
-        self.response.out.write(template.render())
-
-
-class ParseDoParseHandler(webapp2.RequestHandler):
-    def get(self):
-        input_string = self.request.get('input')
-        output_type = self.request.get('type')
-        item = medievia.parse.parse(input_string)
-
-        if output_type == "xml":
-            self.response.write(item.to_xml())
-        else:
-            self.response.write(item.to_string())
-
-
-class ParseUploadHandler(webapp2.RequestHandler):
-    def post(self):
-        input_string = self.request.get('input')
-        item = medievia.parse.parse(input_string)
-        medievia.item.create_or_update_item(item)
-
-
-class RunTestHandler(webapp2.RequestHandler):
-    def get(self):
-        test.run_test()
-        self.response.write("worked")
-
-
 class AdminHandler(webapp2.RequestHandler):
     def get(self):
-        template = jinja_environment.get_template('templates/admin.html')
-        self.response.out.write(template.render())
+        if is_admin_user():
+            template_values = {
+                'admins': medievia.admin.get()
+            }
+
+            template = jinja_environment.get_template('templates/admin/admin.html')
+            self.response.out.write(template.render(template_values))
+        else:
+            self.abort(401)
 
 
 class AdminUpdateIndexesHandler(webapp2.RequestHandler):
     def post(self):
-        medievia.search.update_indexes()
+        if is_admin_user():
+            medievia.search.update_indexes()
+        else:
+            self.abort(401)
+
+
+class AdminAddAdminHandler(webapp2.RequestHandler):
+    def post(self):
+        if is_admin_user():
+            alias = self.request.get('alias')
+            email = self.request.get('email')
+            medievia.admin.create_or_update(medievia.admin.Admin(alias=alias, email=email))
+        else:
+            self.abort(401)
+
+
+class AdminRemoveAdminHandler(webapp2.RequestHandler):
+    def get(self):
+        if is_admin_user():
+            key = self.request.get('key')
+            medievia.admin.delete(key)
+            time.sleep(0.2)
+            self.redirect('/admin')
+        else:
+            self.abort(401)
+
+
+class ParseHandler(webapp2.RedirectHandler):
+    def get(self):
+        if is_admin_user():
+            template = jinja_environment.get_template('templates/admin/parse.html')
+            self.response.out.write(template.render())
+        else:
+            self.abort(401)
+
+
+class ParseDoParseHandler(webapp2.RequestHandler):
+    def get(self):
+        if is_admin_user():
+            input_string = self.request.get('input')
+            output_type = self.request.get('type')
+            item = medievia.parse.parse(input_string)
+
+            if output_type == "xml":
+                self.response.write(item.to_xml())
+            else:
+                self.response.write(item.to_string())
+        else:
+            self.abort(401)
+
+
+class ParseUploadHandler(webapp2.RequestHandler):
+    def post(self):
+        if is_admin_user():
+            input_string = self.request.get('input')
+            item = medievia.parse.parse(input_string)
+            medievia.item.create_or_update_item(item)
+        else:
+            self.abort(401)
+
+
+def is_admin_user():
+    try:
+        user = users.get_current_user()
+        email = user.email()
+        return medievia.admin.is_admin(email)
+    except:
+        return False
 
 
 app = webapp2.WSGIApplication([
@@ -102,6 +146,8 @@ app = webapp2.WSGIApplication([
     ('/search', SearchHandler),
     ('/admin', AdminHandler),
     ('/admin/updateIndexes', AdminUpdateIndexesHandler),
+    ('/admin/addadmin', AdminAddAdminHandler),
+    ('/admin/removeadmin', AdminRemoveAdminHandler),
     ('/admin/parse', ParseHandler),
     ('/admin/parse/doParse', ParseDoParseHandler),
     ('/admin/parse/upload', ParseUploadHandler)], debug=True)
