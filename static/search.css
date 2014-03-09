@@ -9,7 +9,7 @@
 }
 
 #resultTable th{
-    background-color: #5f5f5f;
+    background-color: #29395d;
     color: white;
 }
 
@@ -21,6 +21,14 @@
 
 .boxBorder{
     border: 1px solid #999;
+}
+
+.resultRow{
+
+}
+
+.resultRow:hover{
+    background-color: #88a2dd;
 }
 
 .displayRow{

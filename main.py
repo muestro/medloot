@@ -47,7 +47,7 @@ class SearchHandler(webapp2.RequestHandler):
                 grouped_items[item.name].append(item)
             #grouped_items = {item.name: item for item in items}
             template_values = {
-                'is_admin_user': is_admin_user,
+                'is_admin_user': is_admin_user(),
                 'grouped_items': grouped_items,
                 'query': query
             }
@@ -98,6 +98,24 @@ class AdminRemoveAdminHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
+class AdminItemHandler(webapp2.RequestHandler):
+    def get(self):
+        if is_admin_user():
+            item_key = self.request.get('item_key')
+            item = medievia.item.get_item(item_key)
+
+            template_values = {
+                'is_admin_user': is_admin_user(),
+                'item': item,
+                'query': self.request.get('query')
+            }
+
+            template = jinja_environment.get_template('templates/admin/item.html')
+            self.response.out.write(template.render(template_values))
+        else:
+            self.abort(401)
+
+
 class ParseHandler(webapp2.RedirectHandler):
     def get(self):
         if is_admin_user():
@@ -135,8 +153,11 @@ class ParseUploadHandler(webapp2.RequestHandler):
 def is_admin_user():
     try:
         user = users.get_current_user()
-        email = user.email()
-        return medievia.admin.is_admin(email)
+        if user:
+            email = user.email()
+            return medievia.admin.is_admin(email) or users.is_current_user_admin()
+        else:
+            return False
     except:
         return False
 
@@ -150,6 +171,7 @@ app = webapp2.WSGIApplication([
     ('/admin/removeadmin', AdminRemoveAdminHandler),
     ('/admin/parse', ParseHandler),
     ('/admin/parse/doParse', ParseDoParseHandler),
-    ('/admin/parse/upload', ParseUploadHandler)], debug=True)
+    ('/admin/parse/upload', ParseUploadHandler),
+    ('/admin/item', AdminItemHandler)], debug=True)
 
 

@@ -24,6 +24,11 @@ $(document).ready(function(){
         });
     });
 
+    $('#editItemButton').click(function(){
+        var itemKey = $('#itemKeyInput').val();
+        window.location.href = '/admin/item?item_key=' + itemKey;
+    });
+
     $('#doParse').click(function(){
         var data = {};
         data['input'] = $('#input').val();

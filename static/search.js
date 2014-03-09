@@ -6,5 +6,6 @@ $(document).ready(function(){
         }else{
             displayRow.show();
         }
+        return true;
     });
 });

@@ -73,7 +73,7 @@
                     {% set oindex = loop.index %}
                     {% for item in grouped_items[key] %}
                     <tr id="resultRow{{ oindex }}-{{ loop.index }}" class="resultRow" rowNum="{{ oindex }}-{{ loop.index }}">
-                        <td></td>
+                        <td>{% if is_admin_user %}<a class="editLink" href="/admin/item?item_key={{ item.key() }}&query={{ query }}">edit</a>{% endif %}</td>
                         <td>{{ item.item_type }}</td>
                         <td class="boxBorder">{% if item.get_effect_value("ANTI-MAGE") %}X{% endif %}</td>
                         <td class="boxBorder">{% if item.get_effect_value("ANTI-WARRIOR") %}X{% endif %}</td>

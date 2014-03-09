@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medloot.com - Item</title>
+    <link type="text/css" rel="stylesheet" href="/static/home.css" />
+    <link type="text/css" rel="stylesheet" href="/static/admin/admin.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="/static/admin/admin.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <div class="topBanner">
+    <ul>
+        <li><a href="/">Home</a></li>
+    </ul>
+    <ul class="topBannerRight">
+        <li><a href="/admin">Admin</a></li>
+    </ul>
+    </div>
+    <div id="mainContent">
+        <ul>
+            {% if query %}
+            <li>
+                <a href="/search?q={{query}}">back to search</a>
+            </li>
+            {% endif %}
+            <li>
+                <h2>Edit Item</h2>
+            </li>
+            <li>
+                string:
+            </li>
+            <li>
+                <textarea disabled id="stringArea" cols="85" rows="20" placeholder='' rows='5'>{{ item.to_string() }}</textarea>
+            </li>
+            <li>
+                todo: add individual editable fields
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
