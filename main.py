@@ -20,7 +20,10 @@ class HomeHandler(webapp2.RequestHandler):
     def get(self):
         template = jinja_environment.get_template('templates/home.html')
         template_values = {
-            'is_admin_user': is_admin_user()
+            'is_admin_user': is_admin_user(),
+            'user': users.get_current_user(),
+            'signInUrl': users.create_login_url('/'),
+            'signOutUrl': users.create_logout_url('/')
         }
         self.response.out.write(template.render(template_values))
 

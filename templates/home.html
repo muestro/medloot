@@ -2,10 +2,11 @@
 <html>
 <head>
     <title>Medloot.com - Search</title>
-    <link type="text/css" rel="stylesheet" href="/static/home.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
+    <link type="text/css" rel="stylesheet" href="/static/main.css" />
+    <link rel="shortcut icon" href="/static/favicon.ico" />
     <script src="/static/home.js"></script>
-    <link href='http://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
 </head>
 <body>
 <div class="topBanner">
@@ -13,11 +14,24 @@
         <li></li>
     </ul>
     <ul class="topBannerRight">
-        <li>
+        <li class="admin">
             {% if is_admin_user %}
             <a href="/admin">Admin</a>
             {% endif %}
         </li>
+        {% if user %}
+        <li id="userInfoItem">
+            <div>
+                <span id="email" class="email" style="display: block;">{{ user.email() }}</span>
+                <a id="signOut" class="signOut" href="{{ signOutUrl }}" style="display: block;">Sign out</a>
+            </div>
+            <img src="static/silhouette.png" />
+        </li>
+        {% else %}
+        <li>
+            <a id="signIn" href="{{ signInUrl }}">Sign in</a>
+        </li>
+        {% endif %}
     </ul>
 </div>
 <div align="center" style="width:100%">

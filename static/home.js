@@ -9,5 +9,4 @@ $(document).ready(function(){
     $('#searchIcon').click(function(){
         window.location.href = '/search?q=' + encodeURIComponent($('#searchBar').val());
     });
-
 });
