@@ -119,11 +119,30 @@ class AdminItemHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
-class ParseHandler(webapp2.RedirectHandler):
+class ParseHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
             template = jinja_environment.get_template('templates/admin/parse.html')
             self.response.out.write(template.render())
+        else:
+            self.abort(401)
+
+
+class FileParseHandler(webapp2.RequestHandler):
+    def get(self):
+        if is_admin_user():
+            template = jinja_environment.get_template('templates/admin/fileparse.html')
+            self.response.out.write(template.render())
+        else:
+            self.abort(401)
+
+
+class FileParseDoParseHandler(webapp2.RequestHandler):
+    def get(self):
+        if is_admin_user():
+            input_string = self.request.get('input')
+            items = medievia.parse.parse(input_string)
+
         else:
             self.abort(401)
 
@@ -133,7 +152,7 @@ class ParseDoParseHandler(webapp2.RequestHandler):
         if is_admin_user():
             input_string = self.request.get('input')
             output_type = self.request.get('type')
-            item = medievia.parse.parse(input_string)
+            item = medievia.parse.parse(input_string)[0]
 
             if output_type == "xml":
                 self.response.write(item.to_xml())
@@ -175,6 +194,7 @@ app = webapp2.WSGIApplication([
     ('/admin/parse', ParseHandler),
     ('/admin/parse/doParse', ParseDoParseHandler),
     ('/admin/parse/upload', ParseUploadHandler),
+    ('/admin/fileParse', FileParseHandler),
+    ('/admin/fileParse/doParse', FileParseDoParseHandler),
     ('/admin/item', AdminItemHandler)], debug=True)
-
 

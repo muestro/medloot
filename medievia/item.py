@@ -45,6 +45,10 @@ class Item(db.Model):
         else:
             return ""
 
+    def is_populated(self):
+        return property_has_value(self.name) and property_has_value(self.keywords) \
+            and property_has_value(self.item_type)
+
     def to_string(self):
         # object, name, keywords
         output = "Object: {0} [{1}]\n".format(self.name, ", ".join(self.keywords))
@@ -91,6 +95,10 @@ class Item(db.Model):
             output = output + "Affects: \n\t{0}\n".format("\n\t".join(self.affects))
 
         return output
+
+
+def property_has_value(prop):
+    return isinstance(prop, str) or isinstance(prop, list)
 
 
 # db CRUD ops

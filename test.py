@@ -222,11 +222,16 @@ object16 = """
                 +25 to HIT_POINTS
                 +1 to HITROLL
             """
+from google.appengine.ext import db
 
 
-def run_test():
-    target = object2
-    print target
-    print "\nParsing...\n\n"
+'''
+target = object2
+print target
+print "\nParsing...\n\n"
 
-    medievia.parse.parse(target)
+medievia.parse.parse(target)
+'''
+x = ["123", "1"]
+x = db.StringListProperty()
+print isinstance(x, list)
