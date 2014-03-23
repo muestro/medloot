@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medloot.com - File Parse</title>
+    <link type="text/css" rel="stylesheet" href="/static/main.css" />
+    <link type="text/css" rel="stylesheet" href="/static/admin/admin.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="/static/admin/admin.js"></script>
+    <script src="/static/admin/fileparse.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <div class="topBanner">
+        <ul>
+            <li><a href="/">Home</a></li>
+        </ul>
+        <ul class="topBannerRight">
+            <li><a href="/admin">Admin</a></li>
+        </ul>
+    </div>
+
+    <div class="mainContent">
+        <ul style="margin-bottom: 0px">
+            <li>
+                <h2>File Parse Results</h2>
+            </li>
+            <li><span>upload checked items: </span><button id="upload">Upload</button></li>
+        </ul>
+        <div class="leftContent">
+            <ul id="itemList">
+                {% for item in items %}
+                <li id="resultItem{{loop.index}}" class="resultItem" itemNum="{{loop.index}}">
+                    <input checked type="checkbox" id="checkItem{{loop.index}}"><span>{{ item.name }}</span>
+                    <input type="hidden" id="resultItemStringData{{loop.index}}" value="{{ item.to_string()|e }}" />
+                    <input type="hidden" id="resultItemXMLData{{loop.index}}" value="{{ item.to_xml()|e }}" />
+                </li>
+                {% endfor %}
+                </li>
+            </ul>
+        </div>
+
+        <div class="rightContent">
+            <ul>
+                <li style="padding-bottom: 10px">
+                    <span style="display: inline-block;">string:</span>
+                </li>
+                <li>
+                    <textarea disabled id="displayStringArea" cols="85" rows="20" placeholder='' rows='5'></textarea>
+                </li>
+                <li>
+                    <span>xml:</span>
+                </li>
+                    <textarea disabled id="displayXMLArea" cols="85" rows="30" placeholder='' rows='5'></textarea>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medloot.com - File Upload</title>
+    <link type="text/css" rel="stylesheet" href="/static/main.css" />
+    <link type="text/css" rel="stylesheet" href="/static/admin/admin.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="/static/admin/admin.js"></script>
+    <script src="/static/admin/fileparse.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <div class="topBanner">
+        <ul>
+            <li><a href="/">Home</a></li>
+        </ul>
+        <ul class="topBannerRight">
+            <li><a href="/admin">Admin</a></li>
+        </ul>
+    </div>
+
+    <div class="mainContent">
+        <ul><li>
+            <h2>Upload - Multiple Item</h2>
+        </li></ul>
+        <div class="leftContent">
+            <form action="{{ upload_url }}" method="post" enctype="multipart/form-data" >
+                <ul>
+                    <li>
+                        <input type="file" name="file" />
+                    </li>
+                    <li>
+                        <input type="submit" name="submit" value="Parse" />
+                    </li>
+
+                    <li id="resultList">
+                        {# place holder for parsed content from dynamic template #}
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

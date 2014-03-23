@@ -28,3 +28,11 @@ body{
 #adminContent div{
     margin-left: 40px;
 }
+
+.resultItem:hover{
+    background-color: #88a2dd;
+}
+
+.selected{
+    background-color: #88a2dd;
+}
