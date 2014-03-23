@@ -2,7 +2,10 @@ import webapp2
 import jinja2
 import os
 import time
+import urllib
 from google.appengine.api import users
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
 from collections import defaultdict
 import medievia.parse
 import medievia.item
@@ -128,31 +131,12 @@ class ParseHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
-class FileParseHandler(webapp2.RequestHandler):
-    def get(self):
-        if is_admin_user():
-            template = jinja_environment.get_template('templates/admin/fileparse.html')
-            self.response.out.write(template.render())
-        else:
-            self.abort(401)
-
-
-class FileParseDoParseHandler(webapp2.RequestHandler):
-    def get(self):
-        if is_admin_user():
-            input_string = self.request.get('input')
-            items = medievia.parse.parse(input_string)
-
-        else:
-            self.abort(401)
-
-
 class ParseDoParseHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
             input_string = self.request.get('input')
             output_type = self.request.get('type')
-            item = medievia.parse.parse(input_string)[0]
+            item = medievia.parse.parse(input_string.splitlines())[0]
 
             if output_type == "xml":
                 self.response.write(item.to_xml())
@@ -172,6 +156,46 @@ class ParseUploadHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
+class FileUploadHandler(webapp2.RequestHandler):
+    def get(self):
+        if is_admin_user():
+            upload_url = blobstore.create_upload_url('/admin/fileUpload/callback')
+            template_values = {
+                'upload_url': upload_url
+            }
+            template = jinja_environment.get_template('templates/admin/fileupload.html')
+            self.response.out.write(template.render(template_values))
+        else:
+            self.abort(401)
+
+
+class FileUploadCallbackHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self):
+        upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
+        blob_info = upload_files[0]
+        self.redirect('/admin/fileParse/%s' % blob_info.key())
+
+
+class FileParseBlobHandler(webapp2.RequestHandler):
+    def get(self, resource):
+        resource = str(urllib.unquote(resource))
+        blob_info = blobstore.BlobInfo.get(resource)
+        blob_reader = blobstore.BlobReader(blob_info)
+
+        if is_admin_user():
+            items = medievia.parse.parse(blob_reader)
+
+            template_values = {
+                'is_admin_user': is_admin_user(),
+                'items': items
+            }
+
+            template = jinja_environment.get_template('templates/admin/fileparse.html')
+            self.response.out.write(template.render(template_values))
+        else:
+            self.abort(401)
+
+
 def is_admin_user():
     try:
         user = users.get_current_user()
@@ -183,7 +207,6 @@ def is_admin_user():
     except:
         return False
 
-
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
     ('/search', SearchHandler),
@@ -191,10 +214,16 @@ app = webapp2.WSGIApplication([
     ('/admin/updateIndexes', AdminUpdateIndexesHandler),
     ('/admin/addadmin', AdminAddAdminHandler),
     ('/admin/removeadmin', AdminRemoveAdminHandler),
+
+    # Parse - single item
     ('/admin/parse', ParseHandler),
     ('/admin/parse/doParse', ParseDoParseHandler),
     ('/admin/parse/upload', ParseUploadHandler),
-    ('/admin/fileParse', FileParseHandler),
-    ('/admin/fileParse/doParse', FileParseDoParseHandler),
+
+    # Parse - file
+    ('/admin/fileUpload', FileUploadHandler),
+    ('/admin/fileUpload/callback', FileUploadCallbackHandler),
+    ('/admin/fileParse/([^/]+)?', FileParseBlobHandler),
+
     ('/admin/item', AdminItemHandler)], debug=True)
 

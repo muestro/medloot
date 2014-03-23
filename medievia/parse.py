@@ -2,44 +2,48 @@ import medievia.item
 import re
 
 
-# TODO: parse only supports a single object atm.
-def parse(input_string):
-    lines = [s.strip() for s in input_string.splitlines()]
-
+# input argument can be a string split into lines, or a file reader, or anything that can be iterated on a line
+# by line basis using the for loop
+def parse(input_obj):
     items = []
     item = None
 
-    for index, line in enumerate(lines):
+    for line in input_obj:
         if line == "":
             #print "Skipping line", index, ": ", line
             continue
 
+        line = line.strip("#")
+        line = line.strip()
+
         # normalize the spaces
         line = re.sub(' +', ' ', line)
 
-        if _is_beginning_of_item(line) and item is not None and item.is_populated():
-            # we're at a new item, and finished with the old item
-            items.append(item)
-            item = medievia.item.Item()
-        else:
-            # we're at a new item.  if item had anything in it we're ok scraping it
-            item = medievia.item.Item()
+        if _is_beginning_of_item(line):
+            if item is not None and item.is_populated():
+                # we're at a new item, and finished with the old item
+                items.append(item)
+                item = medievia.item.Item()
+            else:
+                # we're at a new item.  if item had anything in it we're ok scraping it
+                item = medievia.item.Item()
 
-        _parse_name(line, item)
-        _parse_item_type(line, item)
+        if item is not None:
+            _parse_name(line, item)
+            _parse_item_type(line, item)
 
-        # only continue filling out an item if it is has the other expected data
-        if medievia.item.property_has_value(item.name):
-            _parse_equipable_location(line, item)
-            _parse_weight(line, item)
-            _parse_condition(line, item)
-            _parse_days_left(line, item)
-            _parse_charges(line, item)
-            _parse_attributes(line, item)
-            _parse_ac_apply(line, item)
-            _parse_damage_dice(line, item)
-            _parse_class_restriction(line, item)
-            _parse_affects(line, item)
+            # only continue filling out an item if it is has the other expected data
+            if medievia.item.property_has_value(item.name):
+                _parse_equipable_location(line, item)
+                _parse_weight(line, item)
+                _parse_condition(line, item)
+                _parse_days_left(line, item)
+                _parse_charges(line, item)
+                _parse_attributes(line, item)
+                _parse_ac_apply(line, item)
+                _parse_damage_dice(line, item)
+                _parse_class_restriction(line, item)
+                _parse_affects(line, item)
 
     if item.is_populated():
         items.append(item)
@@ -61,6 +65,8 @@ def _parse_name(input_string, item):
             item.keywords = medievia.item.listify(input_string.split("[")[1].strip("]").split())
 
         return True
+    else:
+        return False
 
 
 # single value
