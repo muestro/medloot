@@ -29,10 +29,19 @@ body{
     margin-left: 40px;
 }
 
+.resultItem{
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
 .resultItem:hover{
     background-color: #88a2dd;
 }
 
 .selected{
     background-color: #88a2dd;
+}
+
+.rightContent li{
+    padding-bottom: 10px;
 }

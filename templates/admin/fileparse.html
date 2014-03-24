@@ -31,27 +31,30 @@
                 {% for item in items %}
                 <li id="resultItem{{loop.index}}" class="resultItem" itemNum="{{loop.index}}">
                     <input checked type="checkbox" id="checkItem{{loop.index}}"><span>{{ item.name }}</span>
+                    <input type="hidden" id="sourceStringData{{loop.index}}" value="{{ item.source_string|e }}" />
                     <input type="hidden" id="resultItemStringData{{loop.index}}" value="{{ item.to_string()|e }}" />
                     <input type="hidden" id="resultItemXMLData{{loop.index}}" value="{{ item.to_xml()|e }}" />
                 </li>
                 {% endfor %}
-                </li>
             </ul>
         </div>
 
         <div class="rightContent">
             <ul>
-                <li style="padding-bottom: 10px">
-                    <span style="display: inline-block;">string:</span>
+                <li>
+                    <span style="display: inline-block;">source:</span>
                 </li>
+                <li>
+                    <textarea disabled id="displaySourceArea" cols="85" rows="20" placeholder='' rows='5'></textarea>
+                </li>
+                <li>result:</li>
                 <li>
                     <textarea disabled id="displayStringArea" cols="85" rows="20" placeholder='' rows='5'></textarea>
                 </li>
                 <li>
-                    <span>xml:</span>
-                </li>
                     <textarea disabled id="displayXMLArea" cols="85" rows="30" placeholder='' rows='5'></textarea>
                 </li>
+
             </ul>
         </div>
     </div>

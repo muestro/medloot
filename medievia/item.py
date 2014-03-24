@@ -15,12 +15,15 @@ class Item(db.Model):
     days_left = db.StringProperty()
     class_restrictions = db.StringListProperty()
     affects = db.StringListProperty()
+    modifiers = db.StringListProperty()
 
     charges = db.StringProperty()
     attributes = db.StringListProperty()
     damage_dice1 = db.StringProperty()
     damage_dice2 = db.StringProperty()
     ac_apply = db.StringProperty()
+
+    source_string = ''
 
     # todo: change the affects to be their own separate object.
     # Make the property in this class be a ListProperty(db.Key)
@@ -93,6 +96,10 @@ class Item(db.Model):
         # affects
         if self.affects:
             output = output + "Affects: \n\t{0}\n".format("\n\t".join(self.affects))
+
+        # modifiers
+        if self.modifiers:
+            output = output + "Skill/Spell Modifiers: \n\t{0}\n".format("\n\t".join(self.modifiers))
 
         return output
 
