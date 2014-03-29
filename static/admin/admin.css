@@ -45,3 +45,21 @@ body{
 .rightContent li{
     padding-bottom: 10px;
 }
+
+/* File Parse */
+
+.listNoIndent ul{
+    padding-left: 0px;
+}
+
+.outputItem{
+    display: none;
+}
+
+a.editLink{
+    color: blue
+}
+
+a.editLink:visited{
+    color: blue;
+}

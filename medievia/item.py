@@ -52,6 +52,9 @@ class Item(db.Model):
         return property_has_value(self.name) and property_has_value(self.keywords) \
             and property_has_value(self.item_type)
 
+    def to_dict(self):
+        return db.to_dict(self)
+
     def to_string(self):
         # object, name, keywords
         output = "Object: {0} [{1}]\n".format(self.name, ", ".join(self.keywords))

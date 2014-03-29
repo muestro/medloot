@@ -184,10 +184,12 @@ class FileParseBlobHandler(webapp2.RequestHandler):
 
         if is_admin_user():
             items = medievia.parse.parse(blob_reader)
+            item_dicts = [x.to_dict() for x in items]
 
             template_values = {
                 'is_admin_user': is_admin_user(),
-                'items': items
+                'items': items,
+                'item_dicts': item_dicts
             }
 
             template = jinja_environment.get_template('templates/admin/fileparse.html')

@@ -31,30 +31,39 @@
                 {% for item in items %}
                 <li id="resultItem{{loop.index}}" class="resultItem" itemNum="{{loop.index}}">
                     <input checked type="checkbox" id="checkItem{{loop.index}}"><span>{{ item.name }}</span>
-                    <input type="hidden" id="sourceStringData{{loop.index}}" value="{{ item.source_string|e }}" />
-                    <input type="hidden" id="resultItemStringData{{loop.index}}" value="{{ item.to_string()|e }}" />
-                    <input type="hidden" id="resultItemXMLData{{loop.index}}" value="{{ item.to_xml()|e }}" />
                 </li>
                 {% endfor %}
             </ul>
         </div>
 
-        <div class="rightContent">
+        <div class="rightContent listNoIndent">
             <ul>
-                <li>
-                    <span style="display: inline-block;">source:</span>
+                {% for item in items %}
+                <li id="outputItem{{loop.index}}" class="outputItem">
+                    <ul>
+                        <li>
+                            <span style="display: inline-block;">source:</span>
+                        </li>
+                        <li>
+                            <textarea disabled id="displaySourceArea" cols="85" rows="20" placeholder='' rows='5'>{{ item.source_string|e }}</textarea>
+                        </li>
+                        <li>result [<a href="" class="editLink" itemNum="{{loop.index}}">edit</a>]:</li>
+                        <li>
+                            <textarea disabled id="displayStringArea" cols="85" rows="20" placeholder='' rows='5'>{{ item.to_string()|e }}</textarea>
+                        </li>
+                        <li class="editItem" style="display: none;">
+                            <table>
+                                {% for key, value in item_dicts[loop.index-1].iteritems() %}
+                                <tr>
+                                    <td><span>{{key|e}}</span></td>
+                                    <td><input type="text" size="80" value="{{value|e}}" /></td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </li>
+                    </ul>
                 </li>
-                <li>
-                    <textarea disabled id="displaySourceArea" cols="85" rows="20" placeholder='' rows='5'></textarea>
-                </li>
-                <li>result:</li>
-                <li>
-                    <textarea disabled id="displayStringArea" cols="85" rows="20" placeholder='' rows='5'></textarea>
-                </li>
-                <li>
-                    <textarea disabled id="displayXMLArea" cols="85" rows="30" placeholder='' rows='5'></textarea>
-                </li>
-
+                {% endfor %}
             </ul>
         </div>
     </div>

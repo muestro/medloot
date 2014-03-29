@@ -4,13 +4,15 @@ $(document).ready(function(){
         $(this).addClass('selected');
 
         var itemNum = $(this).attr('itemNum');
-        var sourceValue = $('#sourceStringData' + itemNum).val();
-        var stringValue = $('#resultItemStringData' + itemNum).val();
-        var xmlValue = $('#resultItemXMLData' + itemNum).val();
 
-        $('#displaySourceArea').val(sourceValue);
-        $('#displayStringArea').val(stringValue);
-        $('#displayXMLArea').val(xmlValue);
+        $('.outputItem').hide();
+        $('#outputItem' + itemNum).show();
+    });
+
+    $('.editLink').click(function(){
+        var itemNum = $(this).attr('itemNum');
+        $('#outputItem' + itemNum + ' .editItem').show();
+        return false;
     });
 });
 
