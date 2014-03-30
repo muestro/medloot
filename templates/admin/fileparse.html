@@ -5,7 +5,6 @@
     <link type="text/css" rel="stylesheet" href="/static/main.css" />
     <link type="text/css" rel="stylesheet" href="/static/admin/admin.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <script src="/static/admin/admin.js"></script>
     <script src="/static/admin/fileparse.js"></script>
     <link href='//fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
 </head>
@@ -30,7 +29,7 @@
             <ul id="itemList">
                 {% for item in items %}
                 <li id="resultItem{{loop.index}}" class="resultItem" itemNum="{{loop.index}}">
-                    <input checked type="checkbox" id="checkItem{{loop.index}}"><span>{{ item.name }}</span>
+                    <input checked type="checkbox" id="checkItem{{loop.index}}" itemNum="{{loop.index}}"><span>{{ item.name }}</span>
                 </li>
                 {% endfor %}
             </ul>
@@ -53,10 +52,11 @@
                         </li>
                         <li class="editItem" style="display: none;">
                             <table>
+                                {% set itemNum = loop.index %}
                                 {% for key, value in item_dicts[loop.index-1].iteritems() %}
                                 <tr>
                                     <td><span>{{key|e}}</span></td>
-                                    <td><input type="text" size="80" value="{{value|e}}" /></td>
+                                    <td><input class='editInput' type="text" size="80" editForItem="{{itemNum}}" key="{{key|e}}" value="{{value|e}}" /></td>
                                 </tr>
                                 {% endfor %}
                             </table>

@@ -111,6 +111,10 @@ def property_has_value(prop):
     return isinstance(prop, basestring) or isinstance(prop, list)
 
 
+def from_dict(item_properties):
+    return db.to_dict(Item(), item_properties)
+
+
 # db CRUD ops
 def create_or_update_item(item):
     if item is None:

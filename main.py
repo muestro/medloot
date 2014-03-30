@@ -3,6 +3,7 @@ import jinja2
 import os
 import time
 import urllib
+import json
 from google.appengine.api import users
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
@@ -150,8 +151,9 @@ class ParseUploadHandler(webapp2.RequestHandler):
     def post(self):
         if is_admin_user():
             input_string = self.request.get('input')
-            item = medievia.parse.parse(input_string)
-            medievia.item.create_or_update_item(item)
+            item = medievia.parse.parse(input_string.splitlines())
+            if item and item[0]:
+                medievia.item.create_or_update_item(item[0])
         else:
             self.abort(401)
 
@@ -198,6 +200,20 @@ class FileParseBlobHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
+class FileParseUploadHandler(webapp2.RequestHandler):
+    def post(self):
+        if is_admin_user():
+            item_json = self.request.get('items')
+            item_list = json.loads(item_json)
+
+            for item_properties in item_list:
+                item = medievia.item.Item(None, None, **item_properties)
+                #item = medievia.item.from_dict(item_properties)
+                medievia.item.create_or_update_item(item)
+        else:
+            self.abort(401)
+
+
 def is_admin_user():
     try:
         user = users.get_current_user()
@@ -225,6 +241,7 @@ app = webapp2.WSGIApplication([
     # Parse - file
     ('/admin/fileUpload', FileUploadHandler),
     ('/admin/fileUpload/callback', FileUploadCallbackHandler),
+    ('/admin/fileParse/upload', FileParseUploadHandler),
     ('/admin/fileParse/([^/]+)?', FileParseBlobHandler),
 
     ('/admin/item', AdminItemHandler)], debug=True)
