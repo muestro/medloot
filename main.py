@@ -207,8 +207,8 @@ class FileParseUploadHandler(webapp2.RequestHandler):
             item_list = json.loads(item_json)
 
             for item_properties in item_list:
-                item = medievia.item.Item(None, None, **item_properties)
-                #item = medievia.item.from_dict(item_properties)
+                item_key_name = medievia.item.get_key_name(item_properties.get('name'), item_properties.get('affects'))
+                item = medievia.item.Item(None, item_key_name, **item_properties)
                 medievia.item.create_or_update_item(item)
         else:
             self.abort(401)

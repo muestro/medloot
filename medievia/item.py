@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+import hashlib
 
 
 # model object
@@ -111,10 +112,6 @@ def property_has_value(prop):
     return isinstance(prop, basestring) or isinstance(prop, list)
 
 
-def from_dict(item_properties):
-    return db.to_dict(Item(), item_properties)
-
-
 # db CRUD ops
 def create_or_update_item(item):
     if item is None:
@@ -150,3 +147,12 @@ def listify(obj):
         return [obj]
     else:
         return obj
+
+
+def get_key_name(name, affect_strings):
+    if affect_strings and len(affect_strings) > 0:
+        affect_strings.sort()
+        hash_string = name + "|" + "|".join(affect_strings)
+    else:
+        hash_string = name
+    return hashlib.md5(hash_string).hexdigest()
