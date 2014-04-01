@@ -19,7 +19,7 @@
     </ul>
     </div>
     <h1 style="padding-left: 20px;">Admin</h1>
-    <div id="adminContent">
+    <div id="adminContent" style="display: inline-block">
         <ul>
             <li>
                 <h2>Upload</h2>
@@ -62,6 +62,23 @@
                 </div>
             </li>
         </ul>
+    </div>
+    <div style="float: right; display: inline-block; vertical-align: top; border: 1px solid; margin-right: 40px ">
+        <table style="padding: 20px;">
+            <tr>
+                <td><span>Number of items in database: </span></td>
+                <td style="padding-left: 10px;"><span style="font-weight: bold; color: lawngreen">{{ total_items }}</span></td>
+            </tr>
+            <tr>
+                {% if total_items != total_index %}
+                    {% set index_color = "red" %}
+                {% else %}
+                    {% set index_color = "lawngreen" %}
+                {% endif %}
+                <td><span>Number of items in index: </span></td>
+                <td style="padding-left: 10px;"><span style="font-weight:bold; color: {{ index_color }}">{{ total_index }}</span></td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>

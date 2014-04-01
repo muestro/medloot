@@ -1,7 +1,7 @@
 from google.appengine.ext import db
 
 
-class Admin(db.Model):
+class Administrator(db.Model):
     email = db.StringProperty()
     alias = db.StringProperty()
 
@@ -22,13 +22,14 @@ def delete(key):
     item.delete()
 
 
-def get(item_key=None):
+def get(item_key=None, email=None):
     try:
         if item_key:
             return db.get(db.Key(item_key))
-
+        elif email:
+            return db.GqlQuery('SELECT * FROM Administrator WHERE email = :1', email.lower()).get()
         else:
-            return db.GqlQuery('SELECT * FROM Admin ORDER BY alias').run()
+            return db.GqlQuery('SELECT * FROM Administrator ORDER BY alias').run()
     except db.BadKeyError:
         return False
 
@@ -36,7 +37,7 @@ def get(item_key=None):
 def is_admin(email):
     admins = get()
     for admin in admins:
-        if admin.email.lower() == email.lower():
+        if admin.email == email:
             return True
 
     return False

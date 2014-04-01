@@ -116,7 +116,6 @@ def property_has_value(prop):
 def create_or_update_item(item):
     if item is None:
         return
-
     item.put()
 
 
@@ -131,6 +130,11 @@ def delete_item(key):
 def get_items():
     items = db.GqlQuery('SELECT * FROM Item').run()
     return items
+
+
+def get_item_count():
+    q = db.Query(Item)
+    return q.count(limit=10000)
 
 
 def get_item(item_key):

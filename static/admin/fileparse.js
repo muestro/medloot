@@ -45,8 +45,8 @@ $(document).ready(function(){
         data["items"] = JSON.stringify(itemList);
 
         $.post('/admin/fileParse/upload', data, function(response){
-            alert('Successfully uploaded.');
-            clearAll();
+            alert(response);
+            window.location.href = "/admin"
         })
         .fail(function(){
             alert('Upload failed.');

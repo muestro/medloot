@@ -46,9 +46,12 @@ def _delete_all_in_index(index_name):
         doc_index.delete(document_ids)
 
 
-def run_search(query):
+def run_search(query_string):
     print "Attempting search: {0}".format(query)
     index = search.Index(name=_main_index)
+
+    query = search.Query(query_string, options=search.QueryOptions(limit=1000))
+
     results = index.search(query)
 
     items = []
@@ -59,3 +62,10 @@ def run_search(query):
 
     print "Found {0} result(s).".format(results.number_found)
     return items
+
+
+def index_count():
+    index = search.Index(name=_main_index)
+    query = search.Query(" ", options=search.QueryOptions(limit=1000, returned_fields="name",
+                                                          number_found_accuracy=1000))
+    return index.search(query).number_found

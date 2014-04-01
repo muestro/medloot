@@ -11,7 +11,8 @@ from collections import defaultdict
 import medievia.parse
 import medievia.item
 import medievia.search
-import medievia.admin
+import medievia.admin.administrator
+import medievia.admin.message
 jinja_environment = jinja2.Environment(autoescape=True,
                                        loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__))))
 
@@ -66,8 +67,18 @@ class SearchHandler(webapp2.RequestHandler):
 class AdminHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
+            # get total number of items in database
+            total_in_db = medievia.item.get_item_count()
+
+            # get total number of items in index
+            total_in_index = medievia.search.index_count()
+
+            # get all messages in admin message
+
             template_values = {
-                'admins': medievia.admin.get()
+                'admins': medievia.admin.administrator.get(),
+                'total_items': total_in_db,
+                'total_index': total_in_index
             }
 
             template = jinja_environment.get_template('templates/admin/admin.html')
@@ -80,6 +91,8 @@ class AdminUpdateIndexesHandler(webapp2.RequestHandler):
     def post(self):
         if is_admin_user():
             medievia.search.update_indexes()
+            admin = medievia.admin.administrator.get(email=users.get_current_user().email())
+            medievia.admin.message.log(admin=admin, message_string="Index has been updated.")
         else:
             self.abort(401)
 
@@ -89,7 +102,9 @@ class AdminAddAdminHandler(webapp2.RequestHandler):
         if is_admin_user():
             alias = self.request.get('alias')
             email = self.request.get('email')
-            medievia.admin.create_or_update(medievia.admin.Admin(alias=alias, email=email))
+            medievia.admin.administrator.create_or_update(medievia.admin.administrator.Administrator(
+                alias=alias,
+                email=email.lower()))
         else:
             self.abort(401)
 
@@ -98,7 +113,7 @@ class AdminRemoveAdminHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
             key = self.request.get('key')
-            medievia.admin.delete(key)
+            medievia.admin.administrator.delete(key)
             time.sleep(0.2)
             self.redirect('/admin')
         else:
@@ -206,10 +221,25 @@ class FileParseUploadHandler(webapp2.RequestHandler):
             item_json = self.request.get('items')
             item_list = json.loads(item_json)
 
+            # determine how many were duplicates
+            new_count = 0
+            dup_count = 0
+            item_key_names = [medievia.item.get_key_name(item_properties.get('name'), item_properties.get('affects'))
+                              for item_properties in item_list]
+            match_result = medievia.item.Item.get_by_key_name(item_key_names)
+            for match in match_result:
+                if match is None:
+                    new_count += 1
+                else:
+                    dup_count += 1
+
             for item_properties in item_list:
                 item_key_name = medievia.item.get_key_name(item_properties.get('name'), item_properties.get('affects'))
                 item = medievia.item.Item(None, item_key_name, **item_properties)
                 medievia.item.create_or_update_item(item)
+
+            # return the response with counts
+            self.response.out.write("Number of new items: {0}\nNumber of duplicates: {1}".format(new_count, dup_count))
         else:
             self.abort(401)
 
@@ -219,10 +249,11 @@ def is_admin_user():
         user = users.get_current_user()
         if user:
             email = user.email()
-            return medievia.admin.is_admin(email) or users.is_current_user_admin()
+            return medievia.admin.administrator.is_admin(email) or users.is_current_user_admin()
         else:
             return False
-    except:
+    except Exception as e:
+        print e
         return False
 
 app = webapp2.WSGIApplication([
