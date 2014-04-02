@@ -47,7 +47,7 @@ def _delete_all_in_index(index_name):
 
 
 def run_search(query_string):
-    print "Attempting search: {0}".format(query)
+    print "Attempting search: {0}".format(query_string)
     index = search.Index(name=_main_index)
 
     query = search.Query(query_string, options=search.QueryOptions(limit=1000))

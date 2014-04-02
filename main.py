@@ -74,11 +74,13 @@ class AdminHandler(webapp2.RequestHandler):
             total_in_index = medievia.search.index_count()
 
             # get all messages in admin message
+            recent_messages = medievia.admin.message.get()
 
             template_values = {
                 'admins': medievia.admin.administrator.get(),
                 'total_items': total_in_db,
-                'total_index': total_in_index
+                'total_index': total_in_index,
+                'messages': recent_messages
             }
 
             template = jinja_environment.get_template('templates/admin/admin.html')
@@ -91,8 +93,7 @@ class AdminUpdateIndexesHandler(webapp2.RequestHandler):
     def post(self):
         if is_admin_user():
             medievia.search.update_indexes()
-            admin = medievia.admin.administrator.get(email=users.get_current_user().email())
-            medievia.admin.message.log(admin=admin, message_string="Index has been updated.")
+            medievia.admin.message.log("Index has been updated.")
         else:
             self.abort(401)
 
@@ -105,6 +106,7 @@ class AdminAddAdminHandler(webapp2.RequestHandler):
             medievia.admin.administrator.create_or_update(medievia.admin.administrator.Administrator(
                 alias=alias,
                 email=email.lower()))
+            medievia.admin.message.log("Added administrator: {0}.".format(alias))
         else:
             self.abort(401)
 
@@ -113,7 +115,8 @@ class AdminRemoveAdminHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
             key = self.request.get('key')
-            medievia.admin.administrator.delete(key)
+            alias = medievia.admin.administrator.delete(key)
+            medievia.admin.message.log("Removed administrator: {0}".format(alias))
             time.sleep(0.2)
             self.redirect('/admin')
         else:
@@ -240,6 +243,7 @@ class FileParseUploadHandler(webapp2.RequestHandler):
 
             # return the response with counts
             self.response.out.write("Number of new items: {0}\nNumber of duplicates: {1}".format(new_count, dup_count))
+            medievia.admin.message.log("Uploaded new items: {0} (new); {1} (duplicates)".format(new_count, dup_count))
         else:
             self.abort(401)
 

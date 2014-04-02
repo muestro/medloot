@@ -63,8 +63,10 @@
             </li>
         </ul>
     </div>
-    <div style="float: right; display: inline-block; vertical-align: top; border: 1px solid; margin-right: 40px ">
-        <table style="padding: 20px;">
+
+    <div style="float: right; display: inline-block; vertical-align: top; margin-right: 40px ">
+        <h2>Database Status:</h2>
+        <table style="padding: 20px; border: 1px solid; ">
             <tr>
                 <td><span>Number of items in database: </span></td>
                 <td style="padding-left: 10px;"><span style="font-weight: bold; color: lawngreen">{{ total_items }}</span></td>
@@ -79,6 +81,15 @@
                 <td style="padding-left: 10px;"><span style="font-weight:bold; color: {{ index_color }}">{{ total_index }}</span></td>
             </tr>
         </table>
+        <h2>Recent Activity:</h2>
+        <ul>
+            {% for message in messages %}
+            <li><span dateValue="{{ message.date.isoformat() }}"></span> -
+                {{ message.owner }}
+                - <span style="font-weight: bold">{{ message.message }}</span>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
 </body>
 </html>

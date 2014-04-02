@@ -18,8 +18,10 @@ def delete(key):
     if key is None:
         return
 
-    item = db.get(db.Key(key))
-    item.delete()
+    admin = db.get(db.Key(key))
+    alias = admin.alias
+    admin.delete()
+    return alias
 
 
 def get(item_key=None, email=None):

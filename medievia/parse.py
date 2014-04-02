@@ -11,7 +11,7 @@ def parse(input_obj):
     stale_count = 0
 
     for line in input_obj:
-        raw_string = line
+        raw_string = line.decode('utf-8', 'ignore')
         line_not_stale = False
 
         if line == "":
@@ -34,7 +34,7 @@ def parse(input_obj):
                 item = medievia.item.Item()
 
         if item is not None:
-            # check for stale-ness.  if stale, then process the item (if it's complete) and continue
+            # check for staleness.  if stale, then process the item (if it's complete) and continue
             if stale_count >= 5:
                 if item.is_populated():
                     items.append(item)
