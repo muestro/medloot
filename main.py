@@ -105,7 +105,7 @@ class AdminAddAdminHandler(webapp2.RequestHandler):
             email = self.request.get('email')
             medievia.admin.administrator.create_or_update(medievia.admin.administrator.Administrator(
                 alias=alias,
-                email=email.lower()))
+                email=email))
             medievia.admin.message.log("Added administrator: {0}.".format(alias))
         else:
             self.abort(401)

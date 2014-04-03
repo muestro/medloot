@@ -39,7 +39,7 @@ def get(item_key=None, email=None):
 def is_admin(email):
     admins = get()
     for admin in admins:
-        if admin.email == email:
+        if admin.email.lower() == email.lower():
             return True
 
     return False
