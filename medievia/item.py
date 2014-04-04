@@ -134,7 +134,7 @@ def get_items():
 
 def get_item_count():
     q = db.Query(Item)
-    return q.count(limit=10000)
+    return q.count()
 
 
 def get_item(item_key):
