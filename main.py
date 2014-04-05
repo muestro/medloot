@@ -193,6 +193,8 @@ class FileUploadCallbackHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
         blob_info = upload_files[0]
+        medievia.admin.message.log("Uploaded file: <a href='/admin/fileParse/{0}'>/admin/fileParse/{0}</a>"
+                                   .format(blob_info.key()))
         self.redirect('/admin/fileParse/%s' % blob_info.key())
 
 
