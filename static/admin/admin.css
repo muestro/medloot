@@ -63,3 +63,16 @@ a.editLink{
 a.editLink:visited{
     color: blue;
 }
+
+.message{
+    font-weight: bold;
+}
+
+.message a{
+    font-size: 12px;
+    color: blue;
+}
+
+.message a:visited{
+    color: blue;
+}

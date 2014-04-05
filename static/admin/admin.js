@@ -73,6 +73,11 @@ $(document).ready(function(){
         $(this).append(localDateTime.toLocaleString());
     });
 
+    $('[message]').each(function(){
+        var message = $(this).attr('message');
+        $(this).append(message);
+    });
+
 });
 
 function clearAll(){

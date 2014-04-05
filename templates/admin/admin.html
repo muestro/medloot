@@ -86,7 +86,7 @@
             {% for message in messages %}
             <li><span dateValue="{{ message.date.isoformat() }}"></span> -
                 {{ message.owner }}
-                - <span style="font-weight: bold">{{ message.message }}</span>
+                - <span class="message" message="{{message.message|e}}"></span>
             </li>
             {% endfor %}
         </ul>
