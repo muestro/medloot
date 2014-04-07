@@ -82,7 +82,7 @@
             </tr>
         </table>
         <h2>Recent Activity:</h2>
-        <ul>
+        <ul class="messageList">
             {% for message in messages %}
             <li><span dateValue="{{ message.date.isoformat() }}"></span> -
                 {{ message.owner }}

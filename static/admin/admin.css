@@ -76,3 +76,8 @@ a.editLink:visited{
 .message a:visited{
     color: blue;
 }
+
+.messageList{
+    padding-left: 0px;
+    max-width: 650px;
+}
