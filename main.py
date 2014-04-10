@@ -13,6 +13,7 @@ import medievia.item
 import medievia.search
 import medievia.admin.administrator
 import medievia.admin.message
+import medievia.xpxp
 jinja_environment = jinja2.Environment(autoescape=True,
                                        loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__))))
 
@@ -250,6 +251,21 @@ class FileParseUploadHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
+class ToolsHandler(webapp2.RequestHandler):
+    def get(self):
+        template = jinja_environment.get_template('templates/tools/tools.html')
+        self.response.out.write(template.render())
+
+
+class CalculateXPXPHandler(webapp2.RequestHandler):
+    def get(self):
+        moon = self.request.get('moon')
+        eclipse = self.request.get('eclipse')
+        full_text = self.request.get('full_text')
+
+        self.response.write(medievia.xpxp.parse(moon, eclipse, full_text))
+
+
 def is_admin_user():
     try:
         user = users.get_current_user()
@@ -265,6 +281,9 @@ def is_admin_user():
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
     ('/search', SearchHandler),
+    ('/tools', ToolsHandler),
+    ('/tools/xpxp/calculate', CalculateXPXPHandler),
+
     ('/admin', AdminHandler),
     ('/admin/updateIndexes', AdminUpdateIndexesHandler),
     ('/admin/addadmin', AdminAddAdminHandler),

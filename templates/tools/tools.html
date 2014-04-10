@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medloot.com - Tools</title>
+    <link type="text/css" rel="stylesheet" href="/static/main.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="/static/tools/tools.js"></script>
+    <link href='//fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
+    <link rel="shortcut icon" href="/static/favicon.ico" />
+</head>
+<body>
+    <div class="topBanner">
+        <ul>
+            <li><a href="/">Home</a></li>
+        </ul>
+        <ul class="topBannerRight">
+            <li>
+                <a href="/tools">Tools</a>
+            </li>
+            <li class="admin">
+                {% if is_admin_user %}
+                <a href="/admin">Admin</a>
+                {% endif %}
+            </li>
+            {% if user %}
+            <li id="userInfoItem">
+                <div>
+                    <span id="email" class="email" style="display: block;">{{ user.email() }}</span>
+                    <a id="signOut" class="signOut" href="{{ signOutUrl }}" style="display: block;">Sign out</a>
+                </div>
+                <img src="static/silhouette.png" />
+            </li>
+            {% else %}
+            <li>
+                <a id="signIn" href="{{ signInUrl }}">Sign in</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div>
+        <ul>
+            <li>
+                <h2>What is XPXP</h2>
+                <table>
+                    <tr><td colspan="3" style="padding-bottom: 20px;"><span style="font-size: 16px; font-weight: bold; color: #808080;">Use the command <i>gameinfo -r</i> and enter the data below.</span></td> </tr>
+                    <tr>
+                        <td style="vertical-align: top;">
+                            <table>
+                                <tr><td><span>Next New Moon:</span></td><td><input id="moon" type="text" size="30" /></td></tr>
+                                <tr><td><span>Eclipse Start:</span></td><td><input id="eclipse" type="text" size="30" /></td></tr>
+                            </table>
+                        </td>
+                        <td style="vertical-align: top; padding-left: 30px; padding-right: 30px;"><span>or</span></td>
+                        <td>
+                            <textarea id="full_text" rows="10" cols="50" placeholder=""></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><button id="calculateResult">Calculate</button></td>
+                        <td></td>
+                        <td></td>
+                </table>
+
+                <br/>
+
+            </li>
+            <li style="padding-top: 30px">
+                <span id="result" style="font-size: 70px; font-weight: bold;"></span>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
