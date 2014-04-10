@@ -32,6 +32,8 @@ def _parse_moon(input_string):
         input_string = input_string.split("next new moon:")[1]
 
     input_string = input_string.strip()
+    input_string = input_string.strip("fae clams making frae")
+    input_string = input_string.strip()
     return datetime.datetime.strptime(input_string, "%a %b %d %H:%M:%S %Y")
 
 
@@ -41,5 +43,7 @@ def _parse_eclipse(input_string):
     if "eclipse start:" in input_string:
         input_string = input_string.split("eclipse start:")[1]
 
+    input_string = input_string.strip()
+    input_string = input_string.strip("fae clams making stae")
     input_string = input_string.strip()
     return datetime.datetime.strptime(input_string, "%a %b %d %H:%M:%S %Y")
