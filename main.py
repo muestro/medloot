@@ -37,31 +37,20 @@ class HomeHandler(webapp2.RequestHandler):
 class SearchHandler(webapp2.RequestHandler):
     def get(self):
         query = self.request.get('q')
+        grouped_items = defaultdict(list)
+        template_values = {
+            'is_admin_user': is_admin_user(),
+            'grouped_items': grouped_items,
+            'query': query
+        }
+
         if query:
             items = medievia.search.run_search(query)
 
-        # flat list
-        if self.request.get('style') == 'flatlist':
-            template_values = {
-                'is_admin_user': is_admin_user(),
-                'items': items,
-                'query': query
-            }
-            template = jinja_environment.get_template('templates/search_flat.html')
-
-        # grouped by item name
-        else:
-            grouped_items = defaultdict(list)
             for item in items:
                 grouped_items[item.name].append(item)
-            #grouped_items = {item.name: item for item in items}
-            template_values = {
-                'is_admin_user': is_admin_user(),
-                'grouped_items': grouped_items,
-                'query': query
-            }
-            template = jinja_environment.get_template('templates/search.html')
 
+        template = jinja_environment.get_template('templates/search.html')
         self.response.out.write(template.render(template_values))
 
 

@@ -33,22 +33,8 @@
         </ul>
     </div>
 
-    <!-- put a filter box here -->
-    <!--
-    <div style="border: 1px solid #e9e9e9;">
-        <ul>
-            <li style="border: 1px solid #e9e9e9; background-color: #e9e9e9; padding: 5px; width: 75%; ">
-                <span>Filters</span>
-                <span style="float: right;" class="ui-icon ui-icon-circle-plus"></span>
-            </li>
-            <li>
-
-            </li>
-        </ul>
-    </div>
-    -->
-
     <div style="margin-top: 20px;">
+        {% if grouped_items and grouped_items|length > 0 %}
         <table id="resultTable">
             <thead>
                 <tr>
@@ -97,6 +83,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <span style="padding-left: 30px;">Your search did not produce any results.</span>
+        {% endif %}
     </div>
 </body>
 </html>
