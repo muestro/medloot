@@ -27,6 +27,10 @@
 
 }
 
+.spacer{
+    height: 30px;
+}
+
 .resultRow:hover{
     background-color: #88a2dd;
 }

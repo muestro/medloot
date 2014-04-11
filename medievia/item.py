@@ -98,7 +98,7 @@ class Item(db.Model):
 
 
 def property_has_value(prop):
-    return isinstance(prop, str) or isinstance(prop, list)
+    return isinstance(prop, basestring) or isinstance(prop, list)
 
 
 # db CRUD ops
