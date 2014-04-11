@@ -11,9 +11,9 @@ $(document).ready(function(){
                 //$('#result').empty().append(responseData);
                 var response = $.parseJSON(responseData);
                 $('#resultXPXP').empty().append(response.xpxp);
-                $('#resultRemoveStorm').empty().append(response.locate_serpents);
+                $('#resultRemoveStorm').empty().append(response.remove_storm);
                 $('#resultCreateRainstorm').empty().append(response.create_rainstorm);
-                $('#resultLocateSerpents').empty().append(response.remove_storm);
+                $('#resultLocateSerpents').empty().append(response.locate_serpents);
             }else{
                 alert('Unable to parse data.');
             }
