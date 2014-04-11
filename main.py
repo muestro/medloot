@@ -252,7 +252,7 @@ class CalculateXPXPHandler(webapp2.RequestHandler):
         eclipse = self.request.get('eclipse')
         full_text = self.request.get('full_text')
 
-        self.response.write(medievia.xpxp.parse(moon, eclipse, full_text))
+        self.response.write(json.dumps(medievia.xpxp.parse(moon, eclipse, full_text)))
 
 
 def is_admin_user():

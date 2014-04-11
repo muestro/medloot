@@ -3,6 +3,7 @@
 <head>
     <title>Medloot.com - Tools</title>
     <link type="text/css" rel="stylesheet" href="/static/main.css" />
+    <link type="text/css" rel="stylesheet" href="/static/tools/tools.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <script src="/static/tools/tools.js"></script>
     <link href='//fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
@@ -64,8 +65,17 @@
                 <br/>
 
             </li>
-            <li style="padding-top: 30px">
-                <span id="result" style="font-size: 70px; font-weight: bold;"></span>
+            <li class="result">
+                <h2>Result:</h2>
+                <table>
+                    <thead><td class="xpxpColumn">XPXP</td><td>remove storm</td><td>create rainstorm</td><td>locate serpents</td></thead>
+                    <tr>
+                        <td><span id="resultXPXP"></span></td>
+                        <td><span id="resultRemoveStorm"></span></td>
+                        <td><span id="resultCreateRainstorm"></span></td>
+                        <td><span id="resultLocateSerpents"></span></td></tr>
+                </table>
+
             </li>
         </ul>
     </div>

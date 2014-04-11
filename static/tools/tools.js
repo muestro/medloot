@@ -7,8 +7,13 @@ $(document).ready(function(){
         data['full_text'] = $('#full_text').val();
 
         $.get('/tools/xpxp/calculate', data, function(responseData){
-            if(responseData != "None"){
-                $('#result').empty().append(responseData);
+            if(responseData != "null"){
+                //$('#result').empty().append(responseData);
+                var response = $.parseJSON(responseData);
+                $('#resultXPXP').empty().append(response.xpxp);
+                $('#resultRemoveStorm').empty().append(response.locate_serpents);
+                $('#resultCreateRainstorm').empty().append(response.create_rainstorm);
+                $('#resultLocateSerpents').empty().append(response.remove_storm);
             }else{
                 alert('Unable to parse data.');
             }

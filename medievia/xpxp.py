@@ -20,7 +20,15 @@ def parse(moon=None, eclipse=None, full_text=None):
 
     if moon_time and eclipse_time:
         now = datetime.datetime.now()
-        return "{0} {1} {2}".format((eclipse_time - now).days + 2, (moon_time - now).days + 2, "2")
+        xpxp = "{0} {1} {2}".format((eclipse_time - now).days + 2, (moon_time - now).days + 2, "2")
+        locate_serpents = "{0} {1} {2}".format((eclipse_time - now).days + 1, (moon_time - now).days + 2, "79")
+        create_rainstorm = "{0} {1} {2}".format((eclipse_time - now).days + 3, (moon_time - now).days + 1, "63")
+        remove_storm = "{0} {1} {2}".format((eclipse_time - now).days + 3, (moon_time - now).days + 6, "90")
+
+        return {'xpxp': xpxp,
+                'locate_serpents': locate_serpents,
+                'create_rainstorm': create_rainstorm,
+                'remove_storm': remove_storm}
     else:
         return None
 
