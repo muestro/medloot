@@ -48,7 +48,8 @@ class SearchHandler(webapp2.RequestHandler):
             items = medievia.search.run_search(query)
 
             for item in items:
-                grouped_items[item.name].append(item)
+                if item is not None:
+                    grouped_items[item.name].append(item)
 
         template = jinja_environment.get_template('templates/search.html')
         self.response.out.write(template.render(template_values))
