@@ -1,45 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Medloot.com - Search</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <link href='https://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
-    <link type="text/css" rel="stylesheet" href="/static/main.css" />
-    <link rel="shortcut icon" href="/static/favicon.ico" />
+{% extends "templates/base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block head %}
+    {{ super() }}
     <script src="/static/home.js"></script>
-</head>
-<body>
-<div class="topBanner">
-    <ul>
-        <li></li>
-    </ul>
-    <ul class="topBannerRight">
-        <li class="admin">
-            {% if is_admin_user %}
-            <a href="/admin">Admin</a>
-            {% endif %}
-        </li>
-        {% if user %}
-        <li id="userInfoItem">
-            <div>
-                <span id="email" class="email" style="display: block;">{{ user.email() }}</span>
-                <a id="signOut" class="signOut" href="{{ signOutUrl }}" style="display: block;">Sign out</a>
-            </div>
-            <img src="static/silhouette.png" />
-        </li>
-        {% else %}
-        <li>
-            <a id="signIn" href="{{ signInUrl }}">Sign in</a>
-        </li>
-        {% endif %}
-    </ul>
-</div>
-<div align="center" style="width:100%">
-    <h1 class="splash">MedLoot.com</h1>
-</div>
-<form id="searchForm" onsubmit="return false">
-    <input id="searchBar" type="text" autofocus="autofocus"/>
-    <a id="searchIcon"></a>
-</form>
-</body>
-</html>
+{% endblock %}
+
+{% block content %}
+    <div align="center" style="width:100%">
+        <h1 class="splash">MedLoot.com</h1>
+    </div>
+    <form id="searchForm" onsubmit="return false">
+        <input id="searchBar" type="text" autofocus="autofocus"/>
+        <a id="searchIcon"></a>
+    </form>
+{% endblock %}
