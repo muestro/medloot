@@ -1,0 +1,22 @@
+.result{
+    display: none;
+}
+
+.result thead td{
+    padding-right: 30px;
+    font-weight: normal;
+}
+
+.result td{
+    vertical-align: top;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.xpxpColumn{
+    width: 260px;
+}
+
+#resultXPXP{
+    font-size: 70px;
+}

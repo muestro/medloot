@@ -29,10 +29,55 @@ body{
     margin-left: 40px;
 }
 
+.resultItem{
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
 .resultItem:hover{
     background-color: #88a2dd;
 }
 
 .selected{
     background-color: #88a2dd;
+}
+
+.rightContent li{
+    padding-bottom: 10px;
+}
+
+/* File Parse */
+
+.listNoIndent ul{
+    padding-left: 0px;
+}
+
+.outputItem{
+    display: none;
+}
+
+a.editLink{
+    color: blue
+}
+
+a.editLink:visited{
+    color: blue;
+}
+
+.message{
+    font-weight: bold;
+}
+
+.message a{
+    font-size: 12px;
+    color: blue;
+}
+
+.message a:visited{
+    color: blue;
+}
+
+.messageList{
+    padding-left: 0px;
+    max-width: 650px;
 }

@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+import hashlib
 
 
 # model object
@@ -15,12 +16,15 @@ class Item(db.Model):
     days_left = db.StringProperty()
     class_restrictions = db.StringListProperty()
     affects = db.StringListProperty()
+    modifiers = db.StringListProperty()
 
     charges = db.StringProperty()
     attributes = db.StringListProperty()
     damage_dice1 = db.StringProperty()
     damage_dice2 = db.StringProperty()
     ac_apply = db.StringProperty()
+
+    source_string = ''
 
     # todo: change the affects to be their own separate object.
     # Make the property in this class be a ListProperty(db.Key)
@@ -48,6 +52,9 @@ class Item(db.Model):
     def is_populated(self):
         return property_has_value(self.name) and property_has_value(self.keywords) \
             and property_has_value(self.item_type)
+
+    def to_dict(self):
+        return db.to_dict(self)
 
     def to_string(self):
         # object, name, keywords
@@ -94,6 +101,10 @@ class Item(db.Model):
         if self.affects:
             output = output + "Affects: \n\t{0}\n".format("\n\t".join(self.affects))
 
+        # modifiers
+        if self.modifiers:
+            output = output + "Skill/Spell Modifiers: \n\t{0}\n".format("\n\t".join(self.modifiers))
+
         return output
 
 
@@ -105,7 +116,6 @@ def property_has_value(prop):
 def create_or_update_item(item):
     if item is None:
         return
-
     item.put()
 
 
@@ -122,6 +132,11 @@ def get_items():
     return items
 
 
+def get_item_count():
+    q = db.Query(Item)
+    return q.count()
+
+
 def get_item(item_key):
     try:
         item = db.get(db.Key(item_key))
@@ -136,3 +151,12 @@ def listify(obj):
         return [obj]
     else:
         return obj
+
+
+def get_key_name(name, affect_strings):
+    if affect_strings and len(affect_strings) > 0:
+        affect_strings.sort()
+        hash_string = name + "|" + "|".join(affect_strings)
+    else:
+        hash_string = name
+    return hashlib.md5(hash_string).hexdigest()

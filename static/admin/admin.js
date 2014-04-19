@@ -2,10 +2,12 @@ $(document).ready(function(){
     $('#updateSearchIndex').click(function(){
         var data = {};
         $.post('/admin/updateIndexes', data, function(response){
-            alert('Indexes updated.')
+            alert('Indexes updated.');
+            location.reload();
         })
         .fail(function(){
             alert('Upload failed.');
+            location.reload();
         });
     });
 
@@ -62,6 +64,18 @@ $(document).ready(function(){
         .fail(function(){
             alert('Upload failed.');
         });
+    });
+
+    // update the date fields values of the local time
+    $('[dateValue]').each(function(){
+        var utcTime = $(this).attr('dateValue');
+        var localDateTime = new Date(utcTime);
+        $(this).append(localDateTime.toLocaleString());
+    });
+
+    $('[message]').each(function(){
+        var message = $(this).attr('message');
+        $(this).append(message);
     });
 
 });

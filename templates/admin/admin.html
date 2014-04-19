@@ -6,7 +6,7 @@
     <link type="text/css" rel="stylesheet" href="/static/admin/admin.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <script src="/static/admin/admin.js"></script>
-    <link href='https://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
     <link rel="shortcut icon" href="/static/favicon.ico" />
 </head>
 <body>
@@ -19,7 +19,7 @@
     </ul>
     </div>
     <h1 style="padding-left: 20px;">Admin</h1>
-    <div id="adminContent">
+    <div id="adminContent" style="display: inline-block">
         <ul>
             <li>
                 <h2>Upload</h2>
@@ -61,6 +61,34 @@
                     </div>
                 </div>
             </li>
+        </ul>
+    </div>
+
+    <div style="float: right; display: inline-block; vertical-align: top; margin-right: 40px ">
+        <h2>Database Status:</h2>
+        <table style="padding: 20px; border: 1px solid; ">
+            <tr>
+                <td><span>Number of items in database: </span></td>
+                <td style="padding-left: 10px;"><span style="font-weight: bold; color: lawngreen">{{ total_items }}</span></td>
+            </tr>
+            <tr>
+                {% if total_items != total_index %}
+                    {% set index_color = "red" %}
+                {% else %}
+                    {% set index_color = "lawngreen" %}
+                {% endif %}
+                <td><span>Number of items in index: </span></td>
+                <td style="padding-left: 10px;"><span style="font-weight:bold; color: {{ index_color }}">{{ total_index }}</span></td>
+            </tr>
+        </table>
+        <h2>Recent Activity:</h2>
+        <ul class="messageList">
+            {% for message in messages %}
+            <li><span dateValue="{{ message.date.isoformat() }}"></span> -
+                {{ message.owner }}
+                - <span class="message" message="{{message.message|e}}"></span>
+            </li>
+            {% endfor %}
         </ul>
     </div>
 </body>
