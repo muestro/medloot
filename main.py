@@ -40,6 +40,9 @@ class SearchHandler(webapp2.RequestHandler):
         grouped_items = defaultdict(list)
         template_values = {
             'is_admin_user': is_admin_user(),
+            'user': users.get_current_user(),
+            'signInUrl': users.create_login_url('/'),
+            'signOutUrl': users.create_logout_url('/'),
             'grouped_items': grouped_items,
             'query': query
         }
@@ -68,6 +71,10 @@ class AdminHandler(webapp2.RequestHandler):
             recent_messages = medievia.admin.message.get()
 
             template_values = {
+                'is_admin_user': is_admin_user(),
+                'user': users.get_current_user(),
+                'signInUrl': users.create_login_url('/'),
+                'signOutUrl': users.create_logout_url('/'),
                 'admins': medievia.admin.administrator.get(),
                 'total_items': total_in_db,
                 'total_index': total_in_index,
@@ -135,8 +142,16 @@ class AdminItemHandler(webapp2.RequestHandler):
 class ParseHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
+
+            template_values = {
+                'is_admin_user': is_admin_user(),
+                'user': users.get_current_user(),
+                'signInUrl': users.create_login_url('/'),
+                'signOutUrl': users.create_logout_url('/')
+            }
+
             template = jinja_environment.get_template('templates/admin/parse.html')
-            self.response.out.write(template.render())
+            self.response.out.write(template.render(template_values))
         else:
             self.abort(401)
 
@@ -172,6 +187,10 @@ class FileUploadHandler(webapp2.RequestHandler):
         if is_admin_user():
             upload_url = blobstore.create_upload_url('/admin/fileUpload/callback')
             template_values = {
+                'is_admin_user': is_admin_user(),
+                'user': users.get_current_user(),
+                'signInUrl': users.create_login_url('/'),
+                'signOutUrl': users.create_logout_url('/'),
                 'upload_url': upload_url
             }
             template = jinja_environment.get_template('templates/admin/fileupload.html')
@@ -201,6 +220,9 @@ class FileParseBlobHandler(webapp2.RequestHandler):
 
             template_values = {
                 'is_admin_user': is_admin_user(),
+                'user': users.get_current_user(),
+                'signInUrl': users.create_login_url('/'),
+                'signOutUrl': users.create_logout_url('/'),
                 'items': items,
                 'item_dicts': item_dicts
             }

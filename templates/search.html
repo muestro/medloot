@@ -1,39 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Medloot.com - Search</title>
-    <link href='//fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+{% extends "templates/base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block head %}
+    {{ super() }}
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/ui-darkness/jquery-ui.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-
     <script src="/static/home.js"></script>
     <script src="/static/search.js"></script>
-    <link type="text/css" rel="stylesheet" href="/static/main.css" />
     <link type="text/css" rel="stylesheet" href="/static/search.css" />
-    <link rel="shortcut icon" href="/static/favicon.ico" />
-</head>
-<body>
-    <div class="topBanner">
-        <ul>
-            <li class="miniSplash"><a href="/">MedLoot.com</a></li>
-            <li>
-                <form id="searchForm" onsubmit="return false">
-                    <input id="searchBar" type="text" value="{{query}}"/>
-                    <a id="searchIcon"></a>
-                </form>
-            </li>
-        </ul>
-        <ul class="topBannerRight">
-             <li>
-                {% if is_admin_user %}
-                <a href="/admin">Admin</a>
-                {% endif %}
-            </li>
-        </ul>
-    </div>
+{% endblock %}
 
-    <div style="margin-top: 20px;">
+{% block content %}
+<div class="contentContainer">
+    <ul>
+        <li class="miniSplash"><a href="/">MedLoot.com</a></li>
+        <li>
+            <form id="searchForm" onsubmit="return false">
+                <input id="searchBar" type="text" value="{{query}}"/>
+                <a id="searchIcon"></a>
+            </form>
+        </li>
+    </ul>
+    <div>
         {% if grouped_items and grouped_items|length > 0 %}
         <table id="resultTable">
             <thead>
@@ -87,5 +76,5 @@
         <span style="padding-left: 30px;">Your search did not produce any results.</span>
         {% endif %}
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

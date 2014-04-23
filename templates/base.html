@@ -10,17 +10,17 @@
     {% endblock %}
 </head>
 <body>
-    <div class="topBanner">
-        <ul>
-            <li style="padding-top: 10px;"><a href="/">Home</a></li>
+    <div class="topBannerContainer">
+        <ul class="topBannerLeft">
+            <li class="miniSplash"><a href="/">MedLoot.com</a></li>
         </ul>
         <ul class="topBannerRight">
-            <li>
-                <a href="/tools">Tools</a>
-            </li>
+            <li><a href="/tools">Tools</a></li>
             <li class="admin">
                 {% if is_admin_user %}
-                <a href="/admin">Admin</a>
+                <div>
+                    <a href="/admin">Admin</a>
+                </div>
                 {% endif %}
             </li>
             {% if user %}
@@ -29,7 +29,7 @@
                     <span id="email" class="email" style="display: block;">{{ user.email() }}</span>
                     <a id="signOut" class="signOut" href="{{ signOutUrl }}" style="display: block;">Sign out</a>
                 </div>
-                <img src="static/silhouette.png" />
+                <img src="/static/silhouette.png" />
             </li>
             {% else %}
             <li>

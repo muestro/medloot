@@ -1,11 +1,12 @@
-.topBanner{
-    background: #f1f1f1;
-    padding-bottom: 10px;
+.contentContainer{
+    width: 100%;
+    text-align: center;
 }
 
 #resultTable{
     border-collapse: collapse;
     margin-left: 40px;
+    display: inline-block;
 }
 
 #resultTable th{
@@ -21,10 +22,6 @@
 
 .boxBorder{
     border: 1px solid #999;
-}
-
-.resultRow{
-
 }
 
 .spacer{
