@@ -265,8 +265,14 @@ class FileParseUploadHandler(webapp2.RequestHandler):
 
 class ToolsHandler(webapp2.RequestHandler):
     def get(self):
+        template_values = {
+            'is_admin_user': is_admin_user(),
+            'user': users.get_current_user(),
+            'signInUrl': users.create_login_url('/'),
+            'signOutUrl': users.create_logout_url('/')
+        }
         template = jinja_environment.get_template('templates/tools/tools.html')
-        self.response.out.write(template.render())
+        self.response.out.write(template.render(template_values))
 
 
 class CalculateXPXPHandler(webapp2.RequestHandler):
