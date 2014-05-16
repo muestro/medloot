@@ -1,19 +1,22 @@
-import webapp2
-import jinja2
 import os
 import time
 import urllib
 import json
+from collections import defaultdict
+
+import webapp2
+import jinja2
 from google.appengine.api import users
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
-from collections import defaultdict
-import medievia.parse
+
+import medievia.item.parse
 import medievia.item
 import medievia.search
 import medievia.admin.administrator
 import medievia.admin.message
 import medievia.xpxp
+
 jinja_environment = jinja2.Environment(autoescape=True,
                                        loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__))))
 
@@ -161,7 +164,7 @@ class ParseDoParseHandler(webapp2.RequestHandler):
         if is_admin_user():
             input_string = self.request.get('input')
             output_type = self.request.get('type')
-            item = medievia.parse.parse(input_string.splitlines())[0]
+            item = medievia.item.parse.parse(input_string.splitlines())[0]
 
             if output_type == "xml":
                 self.response.write(item.to_xml())
@@ -175,13 +178,14 @@ class ParseUploadHandler(webapp2.RequestHandler):
     def post(self):
         if is_admin_user():
             input_string = self.request.get('input')
-            item = medievia.parse.parse(input_string.splitlines())
+            item = medievia.item.parse.parse(input_string.splitlines())
             if item and item[0]:
                 medievia.item.create_or_update_item(item[0])
         else:
             self.abort(401)
 
 
+# upload file
 class FileUploadHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
@@ -199,6 +203,7 @@ class FileUploadHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
+# blobstore calls back to the app after the file has finished uploading
 class FileUploadCallbackHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
@@ -208,6 +213,7 @@ class FileUploadCallbackHandler(blobstore_handlers.BlobstoreUploadHandler):
         self.redirect('/admin/fileParse/%s' % blob_info.key())
 
 
+# the file parse page, which was redirected to by the callback
 class FileParseBlobHandler(webapp2.RequestHandler):
     def get(self, resource):
         resource = str(urllib.unquote(resource))
@@ -215,7 +221,7 @@ class FileParseBlobHandler(webapp2.RequestHandler):
         blob_reader = blobstore.BlobReader(blob_info)
 
         if is_admin_user():
-            items = medievia.parse.parse(blob_reader)
+            items = medievia.item.parse.parse(blob_reader)
             item_dicts = [x.to_dict() for x in items]
 
             template_values = {
@@ -233,6 +239,7 @@ class FileParseBlobHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
+# uploading items from the file parse page
 class FileParseUploadHandler(webapp2.RequestHandler):
     def post(self):
         if is_admin_user():

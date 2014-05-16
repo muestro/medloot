@@ -28,10 +28,10 @@ def parse(input_obj):
             if item is not None and item.is_populated():
                 # we're at a new item, and finished with the old item
                 items.append(item)
-                item = medievia.item.Item()
+                item = medievia.item.ItemSummary()
             else:
                 # we're at a new item.  if item had anything in it we're ok scraping it
-                item = medievia.item.Item()
+                item = medievia.item.ItemSummary()
 
         if item is not None:
             # check for staleness.  if stale, then process the item (if it's complete) and continue

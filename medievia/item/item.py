@@ -24,6 +24,8 @@ class Item(db.Model):
     damage_dice2 = db.StringProperty()
     ac_apply = db.StringProperty()
 
+    is_expired = db.BooleanProperty()
+
     source_string = ''
 
     # todo: change the affects to be their own separate object.
@@ -118,6 +120,9 @@ def create_or_update_item(item):
         return
     item.put()
 
+    # update the corresponding item_info
+    _update_item_info(item)
+
 
 def delete_item(key):
     if key is None:
@@ -127,13 +132,16 @@ def delete_item(key):
     item.delete()
 
 
-def get_items():
-    items = db.GqlQuery('SELECT * FROM Item').run()
+def get_items(name=None):
+    if name is not None:
+        items = db.GqlQuery('SELECT * FROM Item WHERE name = :1', name).run()
+    else:
+        items = db.GqlQuery('SELECT * FROM Item').run()
     return items
 
 
 def get_item_count():
-    q = db.Query(Item)
+    q = db.Query(ItemSummary)
     return q.count()
 
 
@@ -160,3 +168,38 @@ def get_key_name(name, affect_strings):
     else:
         hash_string = name
     return hashlib.md5(hash_string).hexdigest()
+
+
+def _update_item_info(item):
+    # get all the items from the datastore that share the same name
+    items = get_items(item.name)
+
+    affect_min = {}
+    affect_max = {}
+    affect_base = {}
+
+    # gather the min/max/base stats
+    for item in items:
+        for affect in item.affects:
+            value = int(affect.split()[0])
+            name = affect.split()[2]
+
+            if name not in affect_min:
+                affect_min[name] = value
+                affect_max[name] = value
+            else:
+                if value < affect_min[name]:
+                    affect_min[name] = value
+
+                if value > affect_max[name]:
+                    affect_max[name] = value
+
+            # check base
+            if item.is_expired:
+                if name not in affect_base:
+                    affect_base[name] = value
+                else:
+                    if value > affect_base[name]:
+                        affect_base[name] = value
+
+    # update item_info
