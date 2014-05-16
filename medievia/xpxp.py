@@ -31,7 +31,12 @@ def parse(moon=None, eclipse=None, full_text=None):
         return {'xpxp': xpxp,
                 'locate_serpents': locate_serpents,
                 'create_rainstorm': create_rainstorm,
-                'remove_storm': remove_storm}
+                'remove_storm': remove_storm,
+                'debug_current_time': current_time.isoformat(),
+                'debug_moon_time': moon_time.isoformat(),
+                'debug_moon_time_diff': str(moon_time_diff),
+                'debug_eclipse_time': eclipse_time.isoformat(),
+                'debug_eclipse_time_diff': str(eclipse_time_diff)}
     else:
         return None
 
