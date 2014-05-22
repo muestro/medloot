@@ -1,69 +1,71 @@
-from google.appengine.ext import db
+from google.appengine.ext import ndb
+import medievia.item.modifier
+import medievia.item.spell
+import medievia.item.affect
 import hashlib
 
 
 # model object
-class Item(db.Model):
-    name = db.StringProperty()
-    keywords = db.StringListProperty()
-    item_type = db.StringProperty()
-    effects = db.StringListProperty()
-    equipable_locations = db.StringListProperty()
-    weight = db.StringProperty()
-    value = db.StringProperty()
-    level_restriction = db.StringProperty()
-    condition = db.StringProperty()
-    days_left = db.StringProperty()
-    class_restrictions = db.StringListProperty()
-    affects = db.StringListProperty()
-    modifiers = db.StringListProperty()
+# noinspection PyTypeChecker
+class Item(ndb.Model):
+    name = ndb.StringProperty()
+    keywords = ndb.StringProperty(repeated=True)
 
-    charges = db.StringProperty()
-    attributes = db.StringListProperty()
-    damage_dice1 = db.StringProperty()
-    damage_dice2 = db.StringProperty()
-    ac_apply = db.StringProperty()
+    # ARMOR, WEAPON, WORN, WAND, TREASURE, TRASH, STAFF, SCROLL, MAGIC, NOTE, OTHER, REGEN, BOAT, CONTAINER, LIGHT
+    item_type = ndb.StringProperty(repeated=True)
 
-    is_expired = db.BooleanProperty()
+    # ANTI-GOOD(...), ANTI-MAGE(...), ATTACK, BLESS, BONDS, CLAN, CLANLOCK, COLD, DONATION, EVIL, FIRE, GLOW, HOLY, HUM
+    effects = ndb.StringProperty(repeated=True)
+
+    # ABOUT, ARMS, BODY, FEET, FINGER, HANDS, HEAD, HIP, HOLD, LEGS, NECK, SHIELD, TAKE, THROW, WAIST, WIELD, WRIST
+    equipable_locations = ndb.StringProperty(repeated=True)
+
+    weight = ndb.IntegerProperty()
+    value = ndb.IntegerProperty()
+    level_restriction = ndb.IntegerProperty()
+    days_left = ndb.IntegerProperty()
+
+    # The object appears to be in perfect pristine condition.
+    # The object appears to be in excellent condition.
+    # The object appears to be in good condition.
+    # The object appears to be in fair condition.
+    # The object looks as if it will fall apart any day now.
+    condition = ndb.StringProperty()
+
+    # Class Restrictions: ANTI_MAGE ANTI_CLERIC ANTI_WARRIOR ANTI_THIEF
+    class_restrictions = ndb.StringProperty(repeated=True)
+
+    # +X% to parry/rage/disarm/X-Heal/Hammer of Faith/Demonfire/Harm (success/efficiency/proficiency)
+    modifiers = ndb.StructuredProperty(medievia.item.modifier.Modifier, repeated=True)
+
+    # ANTI_CLERIC, ANTI_MAGE, ANTI_THIEF, ANTI_WARRIOR, BACKSTABBER, DAGGER, LONG, None, TWO_HANDED
+    attributes = ndb.StringProperty(repeated=True)
+
+    damage_dice1 = ndb.IntegerProperty()
+    damage_dice2 = ndb.IntegerProperty()
+    ac_apply = ndb.IntegerProperty()
+
+    # Regenerates level 26 spell of Bloodbath.  Has 1 maximum charges.
+    # Regenerates level 25 spell of Iceshield.  Has 5 maximum charges.
+    spells = ndb.StructuredProperty(medievia.item.spell.Spell, repeated=True)
+
+    # affects
+    affects = ndb.StructuredProperty(medievia.item.affect.Affect, repeated=True)
+
+    is_expired = ndb.BooleanProperty()
 
     source_string = ''
-
-    # todo: change the affects to be their own separate object.
-    # Make the property in this class be a ListProperty(db.Key)
-    # Make sure to consider efficiency,
-    # re: http://stackoverflow.com/questions/4719700/list-of-references-in-google-app-engine-for-python
-    # re: http://blog.notdot.net/2010/01/ReferenceProperty-prefetching-in-App-Engine
-    # affects_ref = db.ListProperty(db.Key)
-
-    def get_effect_value(self, effect_name):
-        return effect_name in self.effects
-
-    def get_affect_value(self, affect_name):
-        affect_value = 0
-        has_affect = False
-        for affect in self.affects:
-            if affect_name in affect:
-                has_affect = True
-                affect_value += int(affect.split(" ")[0])
-
-        if has_affect:
-            return affect_value
-        else:
-            return ""
 
     def is_populated(self):
         return property_has_value(self.name) and property_has_value(self.keywords) \
             and property_has_value(self.item_type)
 
-    def to_dict(self):
-        return db.to_dict(self)
-
     def to_string(self):
         # object, name, keywords
-        output = "Object: {0} [{1}]\n".format(self.name, ", ".join(self.keywords))
+        output = "Object: {0} [{1}]\n".format(self.name, " ".join(self.keywords))
 
         # item type, effects
-        output = output + "Item Type: {0} \tEffects: {1}\n".format(self.item_type, " ".join(self.effects))
+        output = output + "Item Type: {0} \tEffects: {1}\n".format(" ".join(self.item_type), " ".join(self.effects))
 
         # equipable locations
         output = output + "Equipable Location(s): {0}\n".format(" ".join(self.equipable_locations))
@@ -77,7 +79,11 @@ class Item(db.Model):
 
         # days left
         if self.days_left:
-            output = output + "Days Left: {0}\n".format(self.days_left)
+            if self.days_left == -1:
+                output = output + "Days Left: Infinity\n"
+            else:
+                output = output + "Days Left: {0}\n".format(self.days_left)
+
 
         # ac-apply
         if self.ac_apply:
@@ -91,9 +97,10 @@ class Item(db.Model):
         if self.damage_dice1 and self.damage_dice2:
             output = output + "Damage Dice of {0}d{1}\n".format(self.damage_dice1, self.damage_dice2)
 
-        # charges
-        if self.charges:
-            output = output + "Has {0} charges left.\n".format(self.charges)
+        # spells
+        if self.spells:
+            for spell in self.spells:
+                output = output + spell.to_string()
 
         # class restrictions
         if self.class_restrictions:
@@ -101,11 +108,16 @@ class Item(db.Model):
 
         # affects
         if self.affects:
-            output = output + "Affects: \n\t{0}\n".format("\n\t".join(self.affects))
+            if self.affects > 0:
+                output = output + "Affects:\n"
+            for affect in self.affects:
+                output = output + affect.to_string()
 
         # modifiers
-        if self.modifiers:
-            output = output + "Skill/Spell Modifiers: \n\t{0}\n".format("\n\t".join(self.modifiers))
+        if self.modifiers and self.modifiers > 0:
+            output = output + "Skill/Spell Modifiers: \n"
+            for modifier in self.modifiers:
+                output = output + modifier.to_string()
 
         return output
 
@@ -121,44 +133,31 @@ def create_or_update_item(item):
     item.put()
 
     # update the corresponding item_info
-    _update_item_info(item)
+    #_update_item_info(item)
 
 
 def delete_item(key):
     if key is None:
         return
-
-    item = db.get(db.Key(key))
-    item.delete()
+    key.delete()
 
 
 def get_items(name=None):
     if name is not None:
-        items = db.GqlQuery('SELECT * FROM Item WHERE name = :1', name).run()
+        items = ndb.gql('SELECT * FROM Item WHERE name = :1', name).run()
     else:
-        items = db.GqlQuery('SELECT * FROM Item').run()
+        items = ndb.gql('SELECT * FROM Item').run()
     return items
 
 
 def get_item_count():
-    q = db.Query(ItemSummary)
+    q = Item.query()
     return q.count()
 
 
 def get_item(item_key):
-    try:
-        item = db.get(db.Key(item_key))
-    except db.BadKeyError:
-        return
-
+    item = item_key.get()
     return item
-
-
-def listify(obj):
-    if not isinstance(obj, list):
-        return [obj]
-    else:
-        return obj
 
 
 def get_key_name(name, affect_strings):

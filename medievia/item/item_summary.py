@@ -1,6 +1,7 @@
 from google.appengine.ext import ndb
 
 import medievia.item.modifier
+import medievia.item.spell
 
 
 class ItemSummary(ndb.Model):
@@ -41,26 +42,32 @@ class ItemSummary(ndb.Model):
     damage_dice1 = ndb.IntegerProperty()
     damage_dice2 = ndb.IntegerProperty()
     ac_apply = ndb.IntegerProperty()
-    charges = ndb.IntegerProperty()
+
+    # Regenerates level 26 spell of Bloodbath.  Has 1 maximum charges.
+    # Regenerates level 25 spell of Iceshield.  Has 5 maximum charges.
+    # Level 30 spell of Resurrect.  Holds 7 charges and has 5 charges left.
+    spells = ndb.StructuredProperty(medievia.item.spell.Spell, repeated=True)
 
     # affects
-    hitroll = db.IntegerProperty()
-    damroll = db.IntegerProperty()
-    hit_points = db.IntegerProperty()
-    mana = db.IntegerProperty()
-    armor = db.IntegerProperty()
-    saving_spell = db.IntegerProperty()
-    saving_breath = db.IntegerProperty()
-    saving_rod = db.IntegerProperty()
-    int = db.IntegerProperty()
-    str = db.IntegerProperty()
-    wis = db.IntegerProperty()
-    con = db.IntegerProperty()
-    dex = db.IntegerProperty()
-    influence_melee = db.IntegerProperty()
-    influence_spells = db.IntegerProperty()
-    blunt_vulnerability = db.IntegerProperty()
-    sharp_vulnerability = db.IntegerProperty()
+    hitroll = ndb.IntegerProperty()
+    damroll = ndb.IntegerProperty()
+    hit_points = ndb.IntegerProperty()
+    mana = ndb.IntegerProperty()
+    armor = ndb.IntegerProperty()
+    saving_spell = ndb.IntegerProperty()
+    saving_breath = ndb.IntegerProperty()
+    saving_rod = ndb.IntegerProperty()
+    int = ndb.IntegerProperty()
+    str = ndb.IntegerProperty()
+    wis = ndb.IntegerProperty()
+    con = ndb.IntegerProperty()
+    dex = ndb.IntegerProperty()
+
+    # +1 to INFLUENCE_MELEE
+    influence_melee = ndb.IntegerProperty()
+    influence_spells = ndb.IntegerProperty()
+    blunt_vulnerability = ndb.IntegerProperty()
+    sharp_vulnerability = ndb.IntegerProperty()
 
 
 def create_or_update(item):
