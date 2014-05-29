@@ -13,3 +13,6 @@ class Modifier(ndb.Model):
             return "\t+{0}% to {1} ({2})\n".format(self.value, self.name, self.descriptor)
         else:
             return "\t{0}% to {1} ({2})\n".format(self.value, self.name, self.descriptor)
+
+    def copy(self):
+        return Modifier(name=self.name, value=self.value, descriptor=self.descriptor)

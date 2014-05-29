@@ -12,6 +12,7 @@ from google.appengine.ext.webapp import blobstore_handlers
 
 import medievia.item.parse
 import medievia.item.item
+import  medievia.item.item_summary
 import medievia.search
 import medievia.admin.administrator
 import medievia.admin.message
@@ -174,9 +175,15 @@ class ParseUploadHandler(webapp2.RequestHandler):
     def post(self):
         if is_admin_user():
             input_string = self.request.get('input')
-            item = medievia.item.parse.parse(input_string.splitlines())
-            if item and item[0]:
-                medievia.item.item.create_or_update_item(item[0])
+
+            # create the item via parsing
+            items = medievia.item.parse.parse(input_string.splitlines())
+
+            # create the item summary from an existing item
+            item_summary = medievia.item.item_summary.create_or_update_item_summary(items[0])
+
+            if items and items[0]:
+                medievia.item.item.create_or_update_item(items[0], item_summary)
         else:
             self.abort(401)
 

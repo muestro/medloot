@@ -2,78 +2,89 @@ from google.appengine.ext import ndb
 
 import medievia.item.modifier
 import medievia.item.spell
+import medievia.item.item_base
 
 
-class ItemSummary(ndb.Model):
-
-    name = ndb.StringProperty()
-    keywords = ndb.StringProperty(repeated=True)
-
-    # ARMOR, WEAPON, WORN, WAND, TREASURE, TRASH, STAFF, SCROLL, MAGIC, NOTE, OTHER, REGEN, BOAT, CONTAINER, LIGHT
-    item_type = ndb.StringProperty(repeated=True)
-
-    # ANTI-GOOD(...), ANTI-MAGE(...), ATTACK, BLESS, BONDS, CLAN, CLANLOCK, COLD, DONATION, EVIL, FIRE, GLOW, HOLY, HUM
-    effects = ndb.StringProperty(repeated=True)
-
-    # ABOUT, ARMS, BODY, FEET, FINGER, HANDS, HEAD, HIP, HOLD, LEGS, NECK, SHIELD, TAKE, THROW, WAIST, WIELD, WRIST
-    equipable_locations = ndb.StringProperty(repeated=True)
-
-    weight = ndb.IntegerProperty()
-    value = ndb.IntegerProperty()
-    level_restriction = ndb.IntegerProperty()
-    days_left = ndb.IntegerProperty()
-
-    # The object appears to be in perfect pristine condition.
-    # The object appears to be in excellent condition.
-    # The object appears to be in good condition.
-    # The object appears to be in fair condition.
-    # The object looks as if it will fall apart any day now.
-    condition = ndb.StringProperty()
-
-    # Class Restrictions: ANTI_MAGE ANTI_CLERIC ANTI_WARRIOR ANTI_THIEF
-    class_restrictions = ndb.StringProperty(repeated=True)
+class ItemSummary(medievia.item.item_base.ItemBase):
 
     # +X% to parry/rage/disarm/X-Heal/Hammer of Faith/Demonfire/Harm (success/efficiency/proficiency)
-    modifiers = ndb.StructuredProperty(medievia.item.modifier.Modifier, repeated=True)
-
-    # ANTI_CLERIC, ANTI_MAGE, ANTI_THIEF, ANTI_WARRIOR, BACKSTABBER, DAGGER, LONG, None, TWO_HANDED
-    attributes = ndb.StringProperty(repeated=True)
-
-    damage_dice1 = ndb.IntegerProperty()
-    damage_dice2 = ndb.IntegerProperty()
-    ac_apply = ndb.IntegerProperty()
+    base_modifiers = ndb.StructuredProperty(medievia.item.modifier.Modifier, repeated=True)
+    min_modifiers = ndb.StructuredProperty(medievia.item.modifier.Modifier, repeated=True)
+    max_modifiers = ndb.StructuredProperty(medievia.item.modifier.Modifier, repeated=True)
 
     # Regenerates level 26 spell of Bloodbath.  Has 1 maximum charges.
     # Regenerates level 25 spell of Iceshield.  Has 5 maximum charges.
-    # Level 30 spell of Resurrect.  Holds 7 charges and has 5 charges left.
-    spells = ndb.StructuredProperty(medievia.item.spell.Spell, repeated=True)
+    base_spells = ndb.StructuredProperty(medievia.item.spell.Spell, repeated=True)
+    min_spells = ndb.StructuredProperty(medievia.item.spell.Spell, repeated=True)
+    max_spells = ndb.StructuredProperty(medievia.item.spell.Spell, repeated=True)
 
     # affects
-    hitroll = ndb.IntegerProperty()
-    damroll = ndb.IntegerProperty()
-    hit_points = ndb.IntegerProperty()
-    mana = ndb.IntegerProperty()
-    armor = ndb.IntegerProperty()
-    saving_spell = ndb.IntegerProperty()
-    saving_breath = ndb.IntegerProperty()
-    saving_rod = ndb.IntegerProperty()
-    int = ndb.IntegerProperty()
-    str = ndb.IntegerProperty()
-    wis = ndb.IntegerProperty()
-    con = ndb.IntegerProperty()
-    dex = ndb.IntegerProperty()
-
-    # +1 to INFLUENCE_MELEE
-    influence_melee = ndb.IntegerProperty()
-    influence_spells = ndb.IntegerProperty()
-    blunt_vulnerability = ndb.IntegerProperty()
-    sharp_vulnerability = ndb.IntegerProperty()
+    base_affects = ndb.StructuredProperty(medievia.item.affect.Affect, repeated=True)
+    min_affects = ndb.StructuredProperty(medievia.item.affect.Affect, repeated=True)
+    max_affects = ndb.StructuredProperty(medievia.item.affect.Affect, repeated=True)
 
 
-def create_or_update(item):
-    raw_item = ItemSummary()
+def _create_item_summary(item):
+    item_summary = ItemSummary()
+    found_property = False
+    for prop in dir(item):
+        attr = getattr(item, prop)
+        if not prop.startswith("_") and isinstance(attr, ndb.Property):
+            setattr(item_summary, prop, attr)
+            found_property = True
 
-    #just manually copy each property over :P
+    if found_property:
+        return item_summary
+    else:
+        return None
 
 
-    raw_item.put()
+def create_or_update_item_summary(item):
+    # check the database to see if it already exists, if so retrieve it
+    if False:
+        # found the item in the db
+        item_summary = None
+    else:
+        item_summary = _create_item_summary(item)
+
+    # for each property set its min max and base
+    for modifier in item.modifiers:
+        _set_min_max_base(modifier, item_summary.min_modifiers, item_summary.max_modifiers, item_summary.base_modifiers,
+                          item.is_expired)
+
+    for affect in item.affects:
+        _set_min_max_base(affect, item_summary.min_affects, item_summary.max_affects, item_summary.base_affects,
+                          item.is_expired)
+
+    for spell in item.spells:
+        _set_min_max_base(spell, item_summary.min_spells, item_summary.max_spells, item_summary.base_spells,
+                          item.is_expired)
+
+    item_summary.put()
+    return item_summary
+
+
+def _set_min_max_base(prop, s_min_properties, s_max_properties, s_base_properties, is_expired):
+    # check if the property exists on the summary
+    try:
+        s_min = next(x for x in s_min_properties if x.name == prop.name)
+        s_max = next(x for x in s_max_properties if x.name == prop.name)
+    except StopIteration:
+        # prop isn't in item summary
+        pass
+
+    # check base separately
+    try:
+        s_base = next(x for x in s_base_properties if x.name == prop.name)
+    except StopIteration:
+        # prop isn't in item summary
+        pass
+
+    if s_min is None or s_min.value > prop.value:
+        s_min = prop.copy()
+
+    if s_max is None or s_max.value < prop.value:
+        s_max = prop.copy()
+
+    if is_expired and (s_base is None or s_base.value < prop.value):
+        s_base = prop.copy()

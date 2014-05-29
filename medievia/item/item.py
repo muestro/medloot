@@ -1,4 +1,5 @@
 from google.appengine.ext import ndb
+import medievia.item.item_base
 import medievia.item.modifier
 import medievia.item.spell
 import medievia.item.affect
@@ -7,22 +8,9 @@ import hashlib
 
 # model object
 # noinspection PyTypeChecker
-class Item(ndb.Model):
-    name = ndb.StringProperty()
-    keywords = ndb.StringProperty(repeated=True)
+class Item(medievia.item.item_base.ItemBase):
+    summary_item_key = ndb.KeyProperty()
 
-    # ARMOR, WEAPON, WORN, WAND, TREASURE, TRASH, STAFF, SCROLL, MAGIC, NOTE, OTHER, REGEN, BOAT, CONTAINER, LIGHT
-    item_type = ndb.StringProperty(repeated=True)
-
-    # ANTI-GOOD(...), ANTI-MAGE(...), ATTACK, BLESS, BONDS, CLAN, CLANLOCK, COLD, DONATION, EVIL, FIRE, GLOW, HOLY, HUM
-    effects = ndb.StringProperty(repeated=True)
-
-    # ABOUT, ARMS, BODY, FEET, FINGER, HANDS, HEAD, HIP, HOLD, LEGS, NECK, SHIELD, TAKE, THROW, WAIST, WIELD, WRIST
-    equipable_locations = ndb.StringProperty(repeated=True)
-
-    weight = ndb.IntegerProperty()
-    value = ndb.IntegerProperty()
-    level_restriction = ndb.IntegerProperty()
     days_left = ndb.IntegerProperty()
 
     # The object appears to be in perfect pristine condition.
@@ -32,18 +20,8 @@ class Item(ndb.Model):
     # The object looks as if it will fall apart any day now.
     condition = ndb.StringProperty()
 
-    # Class Restrictions: ANTI_MAGE ANTI_CLERIC ANTI_WARRIOR ANTI_THIEF
-    class_restrictions = ndb.StringProperty(repeated=True)
-
     # +X% to parry/rage/disarm/X-Heal/Hammer of Faith/Demonfire/Harm (success/efficiency/proficiency)
     modifiers = ndb.StructuredProperty(medievia.item.modifier.Modifier, repeated=True)
-
-    # ANTI_CLERIC, ANTI_MAGE, ANTI_THIEF, ANTI_WARRIOR, BACKSTABBER, DAGGER, LONG, None, TWO_HANDED
-    attributes = ndb.StringProperty(repeated=True)
-
-    damage_dice1 = ndb.IntegerProperty()
-    damage_dice2 = ndb.IntegerProperty()
-    ac_apply = ndb.IntegerProperty()
 
     # Regenerates level 26 spell of Bloodbath.  Has 1 maximum charges.
     # Regenerates level 25 spell of Iceshield.  Has 5 maximum charges.
@@ -78,15 +56,17 @@ class Item(ndb.Model):
             output = output + self.condition + "\n"
 
         # days left
-        if self.days_left:
+        if self.days_left is not None:
             if self.days_left == -1:
                 output = output + "Days Left: Infinity\n"
             else:
                 output = output + "Days Left: {0}\n".format(self.days_left)
 
+        if self.available_weight is not None:
+            output = output + "Available Weight: {0} stones\n".format(self.available_weight)
 
         # ac-apply
-        if self.ac_apply:
+        if self.ac_apply is not None:
             output = output + "AC-apply of {0}\n".format(self.ac_apply)
 
         # attributes
@@ -94,7 +74,7 @@ class Item(ndb.Model):
             output = output + "Attributes: {0}\n".format(" ".join(self.attributes))
 
         # damage dice
-        if self.damage_dice1 and self.damage_dice2:
+        if self.damage_dice1 is not None and self.damage_dice2 is not None:
             output = output + "Damage Dice of {0}d{1}\n".format(self.damage_dice1, self.damage_dice2)
 
         # spells
@@ -107,9 +87,8 @@ class Item(ndb.Model):
             output = output + "Class Restrictions: {0}\n".format(" ".join(self.class_restrictions))
 
         # affects
-        if self.affects:
-            if self.affects > 0:
-                output = output + "Affects:\n"
+        if self.affects and self.affects > 0:
+            output = output + "Affects:\n"
             for affect in self.affects:
                 output = output + affect.to_string()
 
@@ -127,13 +106,11 @@ def property_has_value(prop):
 
 
 # db CRUD ops
-def create_or_update_item(item):
+def create_or_update_item(item, item_summary):
     if item is None:
         return
+    item.summary_item_key = item_summary.key
     item.put()
-
-    # update the corresponding item_info
-    #_update_item_info(item)
 
 
 def delete_item(key):

@@ -56,6 +56,7 @@ def parse(input_obj):
                     _parse_weight(line, item) | \
                     _parse_condition(line, item) | \
                     _parse_days_left(line, item) | \
+                    _parse_available_weight(line, item) | \
                     _parse_spell(line, item) | \
                     _parse_attributes(line, item) | \
                     _parse_ac_apply(line, item) | \
@@ -141,7 +142,7 @@ def _parse_weight(input_string, item):
 
 
 def _parse_condition(input_string, item):
-    if "appears to be in" in input_string or "looks as if it will" in input_string:
+    if "appears to be in" in input_string or "looks as if it will" in input_string or "is visibly crumbling" in input_string:
         item.condition = input_string.strip()
         return True
     else:
@@ -154,6 +155,14 @@ def _parse_days_left(input_string, item):
             item.days_left = -1
         else:
             item.days_left = int(input_string.split("Days Left:")[1].strip())
+        return True
+    else:
+        return False
+
+
+def _parse_available_weight(input_string, item):
+    if "Available Weight:" in input_string:
+        item.available_weight = int(input_string.split("Available Weight:")[1].strip().split()[0])
         return True
     else:
         return False
@@ -190,6 +199,7 @@ def _parse_damage_dice(input_string, item):
 
 # Regenerates level 25 spell of Iceshield.  Has 5 maximum charges.
 # Level 30 spell of Resurrect.  Holds 7 charges and has 5 charges left.
+# If eaten, this will produce the effects of the Remove Poison spell.
 def _parse_spell(input_string, item):
     if "spell of" in input_string and \
             ("level" in input_string or "Level" in input_string) and \
@@ -205,6 +215,12 @@ def _parse_spell(input_string, item):
         else:
             spell.regenerates = False
 
+        item.spells.append(spell)
+        return True
+    elif "produce the effects of the" in input_string and " spell" in input_string:
+        spell = medievia.item.spell.Spell()
+        spell.name = input_string.split("produce the effects of the")[1].strip().split(" spell")[0]
+        spell.eaten = True
         item.spells.append(spell)
         return True
     else:
