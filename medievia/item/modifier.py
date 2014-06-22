@@ -16,3 +16,12 @@ class Modifier(ndb.Model):
 
     def copy(self):
         return Modifier(name=self.name, value=self.value, descriptor=self.descriptor)
+
+    def is_same_type(self, modifier2):
+        return self.name == modifier2.name and \
+            self.descriptor == modifier2.descriptor
+
+    def is_equal(self, modifier2):
+        return self.name == modifier2.name and \
+            self.descriptor == modifier2.descriptor and \
+            self.value == modifier2.value

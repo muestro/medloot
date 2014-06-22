@@ -7,7 +7,10 @@ from google.appengine.ext import ndb
 class Spell(ndb.Model):
     name = ndb.StringProperty()
     level = ndb.IntegerProperty()
+
+    # maximum charges--don't really care about how many are left on this item
     charges = ndb.IntegerProperty()
+
     regenerates = ndb.BooleanProperty()
     eaten = ndb.BooleanProperty()
 
@@ -20,3 +23,7 @@ class Spell(ndb.Model):
         else:
             return "Level {0} spell of {1}.  Holds {2} and has {2} charges left.\n".format(
                 self.level, self.name, self.charges)
+
+    def is_same_type(self, spell2):
+        return self.name == spell2.name and \
+            self.level == spell2.level

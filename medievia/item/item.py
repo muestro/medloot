@@ -23,10 +23,6 @@ class Item(medievia.item.item_base.ItemBase):
     # +X% to parry/rage/disarm/X-Heal/Hammer of Faith/Demonfire/Harm (success/efficiency/proficiency)
     modifiers = ndb.StructuredProperty(medievia.item.modifier.Modifier, repeated=True)
 
-    # Regenerates level 26 spell of Bloodbath.  Has 1 maximum charges.
-    # Regenerates level 25 spell of Iceshield.  Has 5 maximum charges.
-    spells = ndb.StructuredProperty(medievia.item.spell.Spell, repeated=True)
-
     # affects
     affects = ndb.StructuredProperty(medievia.item.affect.Affect, repeated=True)
 
@@ -100,6 +96,38 @@ class Item(medievia.item.item_base.ItemBase):
 
         return output
 
+    def is_equal(self, item2):
+        if self.name != item2.name:
+            return False
+
+        # check modifiers
+        if len(self.modifiers) != len(item2.modifiers):
+            return False
+
+        for mod in self.modifiers:
+            found = False
+            for other_mod in item2.modifiers:
+                if mod.is_equal(other_mod):
+                    found = True
+                    break
+            if not found:
+                return False
+
+        # check affects
+        if len(self.affects) != len(item2.affects):
+            return False
+
+        for affect in self.affects:
+            found = False
+            for other_affect in item2.affects:
+                if affect.is_equal(other_affect):
+                    found = True
+                    break
+            if not found:
+                return False
+
+        return True
+
 
 def property_has_value(prop):
     return isinstance(prop, basestring) or isinstance(prop, list)
@@ -109,6 +137,14 @@ def property_has_value(prop):
 def create_or_update_item(item, item_summary):
     if item is None:
         return
+
+    # check to see if the item is already in the database, if it is, don't insert another one
+    items = Item.query(Item.name == item.name).fetch()
+    for db_item in items:
+        if db_item.is_equal(item):
+            return False
+
+    # no db items are the same, so insert the new item
     item.summary_item_key = item_summary.key
     item.put()
 
@@ -117,14 +153,6 @@ def delete_item(key):
     if key is None:
         return
     key.delete()
-
-
-def get_items(name=None):
-    if name is not None:
-        items = ndb.gql('SELECT * FROM Item WHERE name = :1', name).run()
-    else:
-        items = ndb.gql('SELECT * FROM Item').run()
-    return items
 
 
 def get_item_count():
@@ -144,38 +172,3 @@ def get_key_name(name, affect_strings):
     else:
         hash_string = name
     return hashlib.md5(hash_string).hexdigest()
-
-
-def _update_item_info(item):
-    # get all the items from the datastore that share the same name
-    items = get_items(item.name)
-
-    affect_min = {}
-    affect_max = {}
-    affect_base = {}
-
-    # gather the min/max/base stats
-    for item in items:
-        for affect in item.affects:
-            value = int(affect.split()[0])
-            name = affect.split()[2]
-
-            if name not in affect_min:
-                affect_min[name] = value
-                affect_max[name] = value
-            else:
-                if value < affect_min[name]:
-                    affect_min[name] = value
-
-                if value > affect_max[name]:
-                    affect_max[name] = value
-
-            # check base
-            if item.is_expired:
-                if name not in affect_base:
-                    affect_base[name] = value
-                else:
-                    if value > affect_base[name]:
-                        affect_base[name] = value
-
-    # update item_info

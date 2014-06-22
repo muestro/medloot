@@ -153,6 +153,7 @@ def _parse_days_left(input_string, item):
     if "Days Left:" in input_string:
         if "Infinity" in input_string:
             item.days_left = -1
+            item.is_expired = True
         else:
             item.days_left = int(input_string.split("Days Left:")[1].strip())
         return True
@@ -208,7 +209,11 @@ def _parse_spell(input_string, item):
 
         spell.name = input_string.split("spell of")[1].strip().split(".")[0]
         spell.level = int(input_string.lower().split("level")[1].split()[0])
-        spell.charges = int(input_string.lower().split("has")[1].split()[0])
+
+        if "Holds" in input_string:
+            spell.charges = int(input_string.lower().split("holds")[1].split()[0])
+        else:
+            spell.charges = int(input_string.lower().split("has")[1].split()[0])
 
         if "Regenerates" in input_string:
             spell.regenerates = True
