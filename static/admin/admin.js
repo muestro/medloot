@@ -31,31 +31,6 @@ $(document).ready(function(){
         window.location.href = '/admin/item?item_key=' + itemKey;
     });
 
-    $('#doParse').click(function(){
-        var data = {};
-        data['input'] = $('#input').val();
-
-        // get string and display it
-        $.get('/admin/parse/doParse', data, function(responseData){
-            writeStringOutput(responseData);
-        })
-        .fail(function(){
-            alert('Failed to retrieve string data.');
-        });
-    });
-
-    $('#upload').click(function(){
-        var data = {};
-        data['input'] = $('#input').val();
-        $.post('/admin/parse/upload', data, function(response){
-            alert('Successfully uploaded.');
-            clearAll();
-        })
-        .fail(function(){
-            alert('Upload failed.');
-        });
-    });
-
     // update the date fields values of the local time
     $('[dateValue]').each(function(){
         var utcTime = $(this).attr('dateValue');
@@ -69,13 +44,3 @@ $(document).ready(function(){
     });
 
 });
-
-function clearAll(){
-    $('#outputArea').empty();
-    $('#stringArea').val('');
-    $('#inputArea').val('');
-}
-
-function writeStringOutput(value){
-    $('#stringArea').val(value);
-}

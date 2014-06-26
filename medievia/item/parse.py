@@ -31,7 +31,7 @@ def parse(input_obj):
             if item is not None and item.is_populated():
                 # we're at a new item, and finished with the old item
                 items.append(item)
-                item = medievia.item.item.Item
+                item = medievia.item.item.Item()
             else:
                 # we're at a new item.  if item had anything in it we're ok scraping it
                 item = medievia.item.item.Item()

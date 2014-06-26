@@ -30,8 +30,34 @@ $(document).ready(function(){
                 var value;
                 if(valueString.indexOf('[') == 0){
                     valueString = valueString.replace(/'/g, '"');
-                    value = JSON.parse(valueString);
+                    valueString = valueString.replace(/ None/g, ' "None"');
+                    valueString = valueString.replace(/ True/g, ' "True"');
+                    valueString = valueString.replace(/ False/g, ' "False"');
+
+                    try {
+                        value = JSON.parse(valueString);
+                    }catch(err){
+                        $('#error').append('Error when JSON.parse(): ' + err.message +
+                            '<br/>item: ' + $('#resultItem'+$(element).attr('editForItem')).text().trim() +
+                            '<br/>key: ' + key +
+                            '<br/>value string: ' + valueString +
+                            '<br/><br/>');
+                        // continue to the next iteration
+                        return true;
+                    }
                 }else{
+                    if(!isNaN(valueString)){
+                        valueString = parseInt(valueString);
+                    }
+
+                    if(valueString == "True"){
+                        valueString = true;
+                    }
+
+                    if(valueString == "False"){
+                        valueString = false;
+                    }
+
                     value = valueString;
                 }
 

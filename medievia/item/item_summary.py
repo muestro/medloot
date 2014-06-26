@@ -18,6 +18,49 @@ class ItemSummary(medievia.item.item_base.ItemBase):
     min_affects = ndb.StructuredProperty(medievia.item.affect.Affect, repeated=True)
     max_affects = ndb.StructuredProperty(medievia.item.affect.Affect, repeated=True)
 
+    _search_term_exclusions = {"the", "of", "a"}
+    _max_token_size = 10
+    _minimum_search_term_size = 3
+
+    def get_base_affect(self, affect_name):
+        for affect in self.base_affects:
+            if affect.name == affect_name:
+                return affect.value
+
+        return None
+
+    def get_min_affect(self, affect_name):
+        for affect in self.min_affects:
+            if affect.name == affect_name:
+                return affect.value
+
+        return None
+
+    def get_max_affect(self, affect_name):
+        for affect in self.max_affects:
+            if affect.name == affect_name:
+                return affect.value
+
+        return None
+
+    def _compute_search_terms(self):
+        # original set of terms
+        term_set = set(self.name.lower().split() + self.keywords)
+
+        # remove exclusions
+        term_set.difference_update(self._search_term_exclusions)
+
+        # figure out how far to tokenize, with a maximum of X
+        tokenize_number = min(len(max(term_set, key=len)), self._max_token_size)
+
+        if tokenize_number > self._minimum_search_term_size:
+            for i in range(self._minimum_search_term_size, tokenize_number):
+                term_set.update({x[:i] for x in term_set})
+
+        return list(term_set)
+
+    search_terms = ndb.ComputedProperty(_compute_search_terms, repeated=True)
+
 
 def _create_item_summary(item):
     item_summary = ItemSummary()

@@ -1,0 +1,26 @@
+.resultList{
+
+}
+
+.lit{
+    font-weight: bold;
+    color: black;
+}
+
+.unlit{
+    font-weight: normal;
+    color: lightgray;
+}
+
+.statBlock {
+    font-size: 9px;
+}
+
+.statBlock span{
+    display: block;
+    text-align: center;
+}
+
+.statBlock .max{
+    font-size: 250%;
+}

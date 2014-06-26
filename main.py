@@ -62,6 +62,26 @@ class SearchHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(template_values))
 
 
+class SearchHandler2(webapp2.RequestHandler):
+    def get(self):
+        query = self.request.get('q')
+
+        if query:
+            items = medievia.search.run_new_search(query)
+
+        template_values = {
+            'is_admin_user': is_admin_user(),
+            'user': users.get_current_user(),
+            'signInUrl': users.create_login_url('/'),
+            'signOutUrl': users.create_logout_url('/'),
+            'items': items,
+            'query': query
+        }
+
+        template = jinja_environment.get_template('templates/search2.html')
+        self.response.out.write(template.render(template_values))
+
+
 class AdminHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
@@ -143,7 +163,7 @@ class AdminItemHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
-class ParseHandler(webapp2.RequestHandler):
+class SingleParseHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
 
@@ -154,13 +174,13 @@ class ParseHandler(webapp2.RequestHandler):
                 'signOutUrl': users.create_logout_url('/')
             }
 
-            template = jinja_environment.get_template('templates/admin/parse.html')
+            template = jinja_environment.get_template('templates/admin/singleparse.html')
             self.response.out.write(template.render(template_values))
         else:
             self.abort(401)
 
 
-class ParseDoParseHandler(webapp2.RequestHandler):
+class SingleParseDoParseHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
             input_string = self.request.get('input')
@@ -171,7 +191,7 @@ class ParseDoParseHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
-class ParseUploadHandler(webapp2.RequestHandler):
+class SingleParseUploadHandler(webapp2.RequestHandler):
     def post(self):
         if is_admin_user():
             input_string = self.request.get('input')
@@ -252,19 +272,14 @@ class FileParseUploadHandler(webapp2.RequestHandler):
             # determine how many were duplicates
             new_count = 0
             dup_count = 0
-            item_key_names = [medievia.item.item.get_key_name(item_properties.get('name'), item_properties.get('affects'))
-                              for item_properties in item_list]
-            match_result = medievia.item.item.Item.get_by_key_name(item_key_names)
-            for match in match_result:
-                if match is None:
+
+            for item_properties in item_list:
+                item = medievia.item.item.Item(**item_properties)
+                item_summary = medievia.item.item_summary.create_or_update_item_summary(item)
+                if medievia.item.item.create_or_update_item(item, item_summary):
                     new_count += 1
                 else:
                     dup_count += 1
-
-            for item_properties in item_list:
-                item_key_name = medievia.item.item.get_key_name(item_properties.get('name'), item_properties.get('affects'))
-                item = medievia.item.item.Item(None, item_key_name, **item_properties)
-                medievia.item.item.create_or_update_item(item)
 
             # return the response with counts
             self.response.out.write("Number of new items: {0}\nNumber of duplicates: {1}".format(new_count, dup_count))
@@ -309,6 +324,7 @@ def is_admin_user():
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
     ('/search', SearchHandler),
+    ('/search2', SearchHandler2),
     ('/tools', ToolsHandler),
     ('/tools/xpxp/calculate', CalculateXPXPHandler),
 
@@ -318,9 +334,9 @@ app = webapp2.WSGIApplication([
     ('/admin/removeadmin', AdminRemoveAdminHandler),
 
     # Parse - single item
-    ('/admin/parse', ParseHandler),
-    ('/admin/parse/doParse', ParseDoParseHandler),
-    ('/admin/parse/upload', ParseUploadHandler),
+    ('/admin/singleParse', SingleParseHandler),
+    ('/admin/singleParse/doParse', SingleParseDoParseHandler),
+    ('/admin/singleParse/upload', SingleParseUploadHandler),
 
     # Parse - file
     ('/admin/fileUpload', FileUploadHandler),

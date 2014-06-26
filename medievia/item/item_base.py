@@ -34,6 +34,18 @@ class ItemBase(ndb.Model):
     damage_dice2 = ndb.IntegerProperty()
     ac_apply = ndb.IntegerProperty()
 
+    def is_anti_mage(self):
+        return "ANTI_MAGE" in self.attributes or "ANTI_MAGE" in self.class_restrictions
+
+    def is_anti_cleric(self):
+        return "ANTI_CLERIC" in self.attributes or "ANTI_CLERIC" in self.class_restrictions
+
+    def is_anti_warrior(self):
+        return "ANTI_WARRIOR" in self.attributes or "ANTI_WARRIOR" in self.class_restrictions
+
+    def is_anti_thief(self):
+        return "ANTI_THIEF" in self.attributes or "ANTI_THIEF" in self.class_restrictions
+
 
 # used when creating an item summary from a standard item.  Make sure all attributes in this class are copied over.
 def copy_attributes(from_item, to_item):

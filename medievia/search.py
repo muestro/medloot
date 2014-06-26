@@ -1,34 +1,34 @@
-import medievia.item
+import medievia.item.item_summary
 from google.appengine.api import search
 
 _main_index = "item_search_1"
 
 
 def update_indexes():
-        print "\nAttempting to delete search index..."
-        _delete_all_in_index(_main_index)
-        print "Delete index successful.\n"
+    print "\nAttempting to delete search index..."
+    _delete_all_in_index(_main_index)
+    print "Delete index successful.\n"
 
-        print "Attempting to update search index...\n"
-        index = search.Index(name=_main_index)
+    print "Attempting to update search index...\n"
+    index = search.Index(name=_main_index)
 
-        items = medievia.item.get_items()
-        count = 0
-        for item in items:
-            fields = [
-                search.TextField(name="name", value=item.name),
-                search.TextField(name="keyword", value=" ".join(item.keywords))
-            ]
+    items = medievia.item.get_items()
+    count = 0
+    for item in items:
+        fields = [
+            search.TextField(name="name", value=item.name),
+            search.TextField(name="keyword", value=" ".join(item.keywords))
+        ]
 
-            print "Indexing item: {0} : {1} : {2}".format(item.key().id_or_name(), item.name, " ".join(item.keywords))
-            doc = search.Document(doc_id=str(item.key()), fields=fields)
+        print "Indexing item: {0} : {1} : {2}".format(item.key().id_or_name(), item.name, " ".join(item.keywords))
+        doc = search.Document(doc_id=str(item.key()), fields=fields)
 
-            try:
-                index.put(doc)
-                count += 1
-            except search.Error:
-                print "Error adding index."
-        print "Finished adding to index. Total documents: {0}".format(count)
+        try:
+            index.put(doc)
+            count += 1
+        except search.Error:
+            print "Error adding index."
+    print "Finished adding to index. Total documents: {0}".format(count)
 
 
 def _delete_all_in_index(index_name):
@@ -69,3 +69,8 @@ def index_count():
     query = search.Query(" ", options=search.QueryOptions(limit=1000, returned_fields="name",
                                                           number_found_accuracy=1000))
     return index.search(query).number_found
+
+
+def run_new_search(query_string):
+    return medievia.item.item_summary.ItemSummary.query(
+        medievia.item.item_summary.ItemSummary.search_terms.IN(query_string.split())).fetch(100)

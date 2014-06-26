@@ -33,6 +33,7 @@ def get_better_affect(affect1, affect2):
     else:
         return affect1 if affect1.value > affect2.value else affect2
 
+
 def get_worse_affect(affect1, affect2):
     if affect1.name.lower().startswith("saving"):
         return affect1 if affect1.value > affect2.value else affect2

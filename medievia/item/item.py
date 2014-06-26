@@ -133,10 +133,10 @@ def property_has_value(prop):
     return isinstance(prop, basestring) or isinstance(prop, list)
 
 
-# db CRUD ops
+# Add the item to the database. Return False if the add didn't go through because there is already a duplicate.
 def create_or_update_item(item, item_summary):
-    if item is None:
-        return
+    if item is None or item_summary is None:
+        raise TypeError("item or item_summary was None when attempting to insert item into database")
 
     # check to see if the item is already in the database, if it is, don't insert another one
     items = Item.query(Item.name == item.name).fetch()
@@ -147,6 +147,7 @@ def create_or_update_item(item, item_summary):
     # no db items are the same, so insert the new item
     item.summary_item_key = item_summary.key
     item.put()
+    return True
 
 
 def delete_item(key):

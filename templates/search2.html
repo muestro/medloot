@@ -1,0 +1,93 @@
+{% extends "templates/base.html" %}
+
+{% block title %}Search2{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/ui-darkness/jquery-ui.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="/static/home.js"></script>
+    <link type="text/css" rel="stylesheet" href="/static/search.css" />
+    <link type="text/css" rel="stylesheet" href="/static/search2.css" />
+{% endblock %}
+
+{% block content %}
+<div class="contentContainer">
+    <ul>
+        <li class="miniSplash"><a href="/">MedLoot.com</a></li>
+        <li>
+            <form id="searchForm" onsubmit="return false">
+                <input id="searchBar" type="text" value="{{query}}"/>
+                <a id="searchIcon"></a>
+            </form>
+        </li>
+    </ul>
+    <div>
+        {% if items|length > 0 %}
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Level</th>
+                    <th>Location</th>
+                    <th>Restrictions</th>
+                    <th>Armor</th>
+                    <th>HR</th>
+                    <th>DR</th>
+                    <th>HP</th>
+                    <th>Mana</th>
+                    <th>Inf_Melee</th>
+                    <th>Inf_Spells</th>
+                    <th>SS</th>
+                    <th>SB</th>
+                    <th>SR</th>
+                </tr>
+            </thead>
+            <tbody class="resultList">
+                {% for item in items %}
+                    {% set hr_max = item.get_max_affect('HITROLL') %}
+                    {% set hr_min = item.get_max_affect('HITROLL') %}
+                    {% set hr_base = item.get_max_affect('HITROLL') %}
+
+                    {% set dr_max = item.get_max_affect('DAMROLL') %}
+                    {% set dr_min = item.get_max_affect('DAMROLL') %}
+                    {% set dr_base = item.get_max_affect('DAMROLL') %}
+
+                    {% set oindex = loop.index %}
+                    <tr id="resultRow{{ oindex }}-{{ loop.index }}" class="resultRow" rowNum="{{ oindex }}-{{ loop.index }}">
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.level_restriction }}</td>
+                        <td>{{item.equipable_locations|join('<br />')}}</td>
+                        <td class="unlit">
+                            <span class="{% if item.is_anti_mage() %}lit{% endif %}">!M</span>
+                            <span class="{% if item.is_anti_cleric() %}lit{% endif %}">!C</span>
+                            <span class="{% if item.is_anti_thief() %}lit{% endif %}">!T</span>
+                            <span class="{% if item.is_anti_warrior() %}lit{% endif %}">!W</span>
+                        </td>
+                        <td>{% if item.ac_apply %}{{item.ac_apply}}{%endif%}</td>
+                        <td class="statBlock">
+                            {% if hr_max %}
+                            <span class="max">{% if hr_max %} {{hr_max}} {% else %} ? {% endif %}</span>
+                            <span>{% if hr_min %} {{hr_min}} {% else %} ? {% endif %}</span>
+                            <span>{% if hr_base %} {{hr_base}} {% else %} ? {% endif %}</span>
+                            {% endif %}
+                        </td>
+                        <td class="statBlock">
+                            {% if dr_max %}
+                            <span class="max">{% if dr_max %} {{dr_max}} {% else %} ? {% endif %}</span>
+                            <span>{% if dr_min %} {{dr_min}} {% else %} ? {% endif %}</span>
+                            <span>{% if dr_base %} {{dr_base}} {% else %} ? {% endif %}</span>
+                            {% endif %}
+                        </td>
+
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <span style="padding-left: 30px;">Your search did not produce any results.</span>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
