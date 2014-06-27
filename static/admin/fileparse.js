@@ -62,6 +62,19 @@ $(document).ready(function(){
                 }
 
                 if(value != "None"){
+                    if($.isArray(value)){
+                        // check to see if any of the inner values in the object needs to convert to pure booleans
+                        $.each(value, function(index, obj){
+                            $.each(obj, function(propName, propValue){
+                                if(propValue == "True"){
+                                    propValue = true;
+                                }else if(propValue == "False"){
+                                    propValue = false;
+                                }
+                            });
+                        });
+                    }
+
                     dict[key] = value;
                 }
             });

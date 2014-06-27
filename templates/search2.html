@@ -53,6 +53,35 @@
                     {% set dr_min = item.get_max_affect('DAMROLL') %}
                     {% set dr_base = item.get_max_affect('DAMROLL') %}
 
+                    {% set hp_max = item.get_max_affect('HIT_POINTS') %}
+                    {% set hp_min = item.get_max_affect('HIT_POINTS') %}
+                    {% set hp_base = item.get_max_affect('HIT_POINTS') %}
+
+                    {% set mana_max = item.get_max_affect('MANA') %}
+                    {% set mana_min = item.get_max_affect('MANA') %}
+                    {% set mana_base = item.get_max_affect('MANA') %}
+
+                    {% set infmelee_max = item.get_max_affect('INFLUENCE_MELEE') %}
+                    {% set infmelee_min = item.get_max_affect('INFLUENCE_MELEE') %}
+                    {% set infmelee_base = item.get_max_affect('INFLUENCE_MELEE') %}
+
+                    {% set infspells_max = item.get_max_affect('INFLUENCE_SPELLS') %}
+                    {% set infspells_min = item.get_max_affect('INFLUENCE_SPELLS') %}
+                    {% set infspells_base = item.get_max_affect('INFLUENCE_SPELLS') %}
+
+                    {% set ss_max = item.get_max_affect('SAVING_SPELL') %}
+                    {% set ss_min = item.get_max_affect('SAVING_SPELL') %}
+                    {% set ss_base = item.get_max_affect('SAVING_SPELL') %}
+
+                    {% set sb_max = item.get_max_affect('SAVING_BREATH') %}
+                    {% set sb_min = item.get_max_affect('SAVING_BREATH') %}
+                    {% set sb_base = item.get_max_affect('SAVING_BREATH') %}
+
+                    {% set sr_max = item.get_max_affect('SAVING_ROD') %}
+                    {% set sr_min = item.get_max_affect('SAVING_ROD') %}
+                    {% set sr_base = item.get_max_affect('SAVING_ROD') %}
+
+
                     {% set oindex = loop.index %}
                     <tr id="resultRow{{ oindex }}-{{ loop.index }}" class="resultRow" rowNum="{{ oindex }}-{{ loop.index }}">
                         <td>{{ item.name }}</td>
@@ -68,19 +97,84 @@
                         <td class="statBlock">
                             {% if hr_max %}
                             <span class="max">{% if hr_max %} {{hr_max}} {% else %} ? {% endif %}</span>
-                            <span>{% if hr_min %} {{hr_min}} {% else %} ? {% endif %}</span>
-                            <span>{% if hr_base %} {{hr_base}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if hr_min %} {{hr_min}} {% else %} ? {% endif %}</span>
+                                <span>{% if hr_base %} {{hr_base}} {% else %} ? {% endif %}</span>
+                            </div>
                             {% endif %}
                         </td>
                         <td class="statBlock">
                             {% if dr_max %}
                             <span class="max">{% if dr_max %} {{dr_max}} {% else %} ? {% endif %}</span>
-                            <span>{% if dr_min %} {{dr_min}} {% else %} ? {% endif %}</span>
-                            <span>{% if dr_base %} {{dr_base}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if dr_min %} {{dr_min}} {% else %} ? {% endif %}</span>
+                                <span>{% if dr_base %} {{dr_base}} {% else %} ? {% endif %}</span>
+                            </div>
                             {% endif %}
                         </td>
-
-
+                        <td class="statBlock">
+                            {% if hp_max %}
+                            <span class="max">{% if hp_max %} {{hp_max}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if hp_min %} {{hp_min}} {% else %} ? {% endif %}</span>
+                                <span>{% if hp_base %} {{hp_base}} {% else %} ? {% endif %}</span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="statBlock">
+                            {% if mana_max %}
+                            <span class="max">{% if mana_max %} {{mana_max}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if mana_min %} {{mana_min}} {% else %} ? {% endif %}</span>
+                                <span>{% if mana_base %} {{mana_base}} {% else %} ? {% endif %}</span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="statBlock">
+                            {% if infmelee_max %}
+                            <span class="max">{% if infmelee_max %} {{infmelee_max}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if infmelee_min %} {{infmelee_min}} {% else %} ? {% endif %}</span>
+                                <span>{% if infmelee_base %} {{infmelee_base}} {% else %} ? {% endif %}</span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="statBlock">
+                            {% if infspells_max %}
+                            <span class="max">{% if infspells_max %} {{infspells_max}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if infspells_min %} {{infspells_min}} {% else %} ? {% endif %}</span>
+                                <span>{% if infspells_base %} {{infspells_base}} {% else %} ? {% endif %}</span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="statBlock">
+                            {% if ss_max %}
+                            <span class="max">{% if ss_max %} {{ss_max}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if ss_min %} {{ss_min}} {% else %} ? {% endif %}</span>
+                                <span>{% if ss_base %} {{ss_base}} {% else %} ? {% endif %}</span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="statBlock">
+                            {% if sb_max %}
+                            <span class="max">{% if sb_max %} {{sb_max}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if sb_min %} {{sb_min}} {% else %} ? {% endif %}</span>
+                                <span>{% if sb_base %} {{sb_base}} {% else %} ? {% endif %}</span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="statBlock">
+                            {% if sr_max %}
+                            <span class="max">{% if sr_max %} {{sr_max}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if sr_min %} {{sr_min}} {% else %} ? {% endif %}</span>
+                                <span>{% if sr_base %} {{sr_base}} {% else %} ? {% endif %}</span>
+                            </div>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -13,14 +13,25 @@
 }
 
 .statBlock {
-    font-size: 9px;
+    font-size: 11px;
+}
+
+.statBlock div{
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .statBlock span{
-    display: block;
+    display: inline-block;
     text-align: center;
+    vertical-align: middle;
+}
+
+.statBlock div span{
+    display: block;
+    color: lightgray;
 }
 
 .statBlock .max{
-    font-size: 250%;
+    font-size: 200%;
 }
