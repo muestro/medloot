@@ -174,7 +174,7 @@ class SingleParseHandler(webapp2.RequestHandler):
                 'signOutUrl': users.create_logout_url('/')
             }
 
-            template = jinja_environment.get_template('templates/admin/singleparse.html')
+            template = jinja_environment.get_template('templates/admin/singleParse.html')
             self.response.out.write(template.render(template_values))
         else:
             self.abort(401)
