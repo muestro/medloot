@@ -22,13 +22,6 @@
                 </div>
             </li>
             <li>
-                <h2>Index</h2>
-                <div>
-                    <span>Refresh Index:</span>
-                    <button id="updateSearchIndex">Update</button>
-                </div>
-            </li>
-            <li>
                 <h2>Edit Item</h2>
                 <div>
                     <span>Item Key:</span> <input id="itemKeyInput" type="text" value="" /><button id="editItemButton">Edit</button>
@@ -61,15 +54,6 @@
             <tr>
                 <td><span>Number of items in database: </span></td>
                 <td style="padding-left: 10px;"><span style="font-weight: bold; color: lawngreen">{{ total_items }}</span></td>
-            </tr>
-            <tr>
-                {% if total_items != total_index %}
-                    {% set index_color = "red" %}
-                {% else %}
-                    {% set index_color = "lawngreen" %}
-                {% endif %}
-                <td><span>Number of items in index: </span></td>
-                <td style="padding-left: 10px;"><span style="font-weight:bold; color: {{ index_color }}">{{ total_index }}</span></td>
             </tr>
         </table>
         <h2>Recent Activity:</h2>

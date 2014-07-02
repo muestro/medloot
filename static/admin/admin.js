@@ -1,16 +1,4 @@
 $(document).ready(function(){
-    $('#updateSearchIndex').click(function(){
-        var data = {};
-        $.post('/admin/updateIndexes', data, function(response){
-            alert('Indexes updated.');
-            location.reload();
-        })
-        .fail(function(){
-            alert('Upload failed.');
-            location.reload();
-        });
-    });
-
     $('#addAdminButton').click(function(){
         $('#addAdminButton').prop( "disabled", true );
         var data = {};
