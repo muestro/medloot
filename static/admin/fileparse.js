@@ -65,13 +65,17 @@ $(document).ready(function(){
                     if($.isArray(value)){
                         // check to see if any of the inner values in the object needs to convert to pure booleans
                         $.each(value, function(index, obj){
-                            $.each(obj, function(propName, propValue){
-                                if(propValue == "True"){
-                                    propValue = true;
-                                }else if(propValue == "False"){
-                                    propValue = false;
-                                }
-                            });
+                            if($.isArray(obj) || $.isPlainObject(obj)){
+                                $.each(obj, function(propName, propValue){
+                                    if(propValue == "True"){
+                                        value[index][propName] = true;
+                                    }else if(propValue == "False"){
+                                        value[index][propName] = false;
+                                    }else if(propValue == "None"){
+                                        value[index][propName] = false;
+                                    }
+                                });
+                            }
                         });
                     }
 

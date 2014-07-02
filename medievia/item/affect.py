@@ -3,6 +3,7 @@ from google.appengine.ext import ndb
 
 # HITROLL, DAMROLL, INFLUENCE_MELEE, INFLUENCE_SPELLS, BLUNT_VULNERABILITY, SHARP_VULNERABILITY, HIT_POINTS,
 # MANA, ARMOR, SAVING_SPELL, SAVING_BREATH, SAVING_ROD, INT, STR, WIS, CON, DEX
+# HOLY_VULNERABILITY
 class Affect(ndb.Model):
     name = ndb.StringProperty()
     value = ndb.IntegerProperty()

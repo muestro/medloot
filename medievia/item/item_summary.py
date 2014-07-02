@@ -19,7 +19,7 @@ class ItemSummary(medievia.item.item_base.ItemBase):
     max_affects = ndb.StructuredProperty(medievia.item.affect.Affect, repeated=True)
 
     _search_term_exclusions = {"the", "of", "a"}
-    _max_token_size = 10
+    _max_token_size = 15
     _minimum_search_term_size = 3
 
     def get_base_affect(self, affect_name):

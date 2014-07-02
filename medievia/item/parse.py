@@ -142,7 +142,10 @@ def _parse_weight(input_string, item):
 
 
 def _parse_condition(input_string, item):
-    if "appears to be in" in input_string or "looks as if it will" in input_string or "is visibly crumbling" in input_string:
+    if "appears to be in" in input_string \
+            or "looks as if it will" in input_string \
+            or "is visibly worn down" in input_string \
+            or "is visibly crumbling" in input_string:
         item.condition = input_string.strip()
         return True
     else:
@@ -259,7 +262,7 @@ def _parse_modifiers(input_string, item):
     if _contains_modifier(input_string) and \
        ("+" in input_string or "-" in input_string):
         modifier = medievia.item.modifier.Modifier()
-        modifier.name = input_string.strip().split("to ")[1].split()[0]
+        modifier.name = input_string.strip().split("to ")[1].split("(")[0].strip()
         modifier.value = int(input_string.strip().split("%")[0])
         modifier.descriptor = input_string.strip().split("(")[1].strip(")")
         item.modifiers.append(modifier)
@@ -286,6 +289,7 @@ def _contains_affect(input_string):
        "to SAVING_PETRI" in input_string or \
        "to BLUNT_VULNERABILITY" in input_string or \
        "to SHARP_VULNERABILITY" in input_string or \
+       "to HOLY_VULNERABILITY" in input_string or \
        "to AGE" in input_string or \
        "to SAVING_BREATH" in input_string:
         return True
@@ -295,7 +299,7 @@ def _contains_modifier(input_string):
     if "to disarm (success)" in input_string or \
        "to rage (efficiency)" in input_string or \
        "to parry (success)" in input_string or \
-       "to parry (success)" in input_string or \
+       "to dodge (success)" in input_string or \
        "to disarm (success)" in input_string or \
        "to Fireball (proficiency)" in input_string or \
        "to Fireball (manacost)" in input_string or \
