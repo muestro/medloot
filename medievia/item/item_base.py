@@ -1,5 +1,6 @@
 from google.appengine.ext import ndb
 import medievia.item.spell
+import medievia.item.focus
 
 
 class ItemBase(ndb.Model):
@@ -33,6 +34,7 @@ class ItemBase(ndb.Model):
     damage_dice1 = ndb.IntegerProperty()
     damage_dice2 = ndb.IntegerProperty()
     ac_apply = ndb.IntegerProperty()
+    focus = ndb.StructuredProperty(medievia.item.focus.Focus, repeated=True)
 
     def is_anti_mage(self):
         return "ANTI_MAGE" in self.attributes or "ANTI_MAGE" in self.class_restrictions

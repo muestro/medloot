@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/ui-darkness/jquery-ui.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script src="/static/home.js"></script>
+    <script src="/static/search2.js"></script>
     <link type="text/css" rel="stylesheet" href="/static/search.css" />
     <link type="text/css" rel="stylesheet" href="/static/search2.css" />
 {% endblock %}
@@ -22,7 +23,33 @@
             </form>
         </li>
     </ul>
+
     <div>
+        <!-- filters -->
+        <div class="filterWrapper">
+            <div class="filterGroupHeading">Filters</div>
+            <div class="filterGroup">
+                <label>Class:</label>
+                <div class="buttonGroup">
+                    <button classFilterButton filter="!M">Mage</button>
+                    <button classFilterButton filter="!C">Cleric</button>
+                    <button classFilterButton filter="!T">Thief</button>
+                    <button classFilterButton filter="!W">Warrior</button>
+                </div>
+            </div>
+            <div class="filterGroup">
+                <label>Stats:</label>
+                <div class="buttonGroup">
+                    <button numberFilterButton filter="hp">Hp</button>
+                    <button numberFilterButton filter="mana">Mana</button>
+                    <button numberFilterButton filter="hr">HR</button>
+                    <button numberFilterButton filter="dr">DR</button>
+                </div>
+            </div>
+        </div>
+
+        <div />
+
         {% if items|length > 0 %}
         <table id="resultTable">
             <thead>
@@ -32,10 +59,10 @@
                     <th>Location</th>
                     <th>Restrictions</th>
                     <th>Armor</th>
-                    <th>HR</th>
-                    <th>DR</th>
                     <th>HP</th>
                     <th>Mana</th>
+                    <th>HR</th>
+                    <th>DR</th>
                     <th>Inf_Melee</th>
                     <th>Inf_Spells</th>
                     <th>SS</th>
@@ -100,25 +127,7 @@
                             <span class="{% if item.is_anti_warrior() %}lit{% endif %}">!W</span>
                         </td>
                         <td>{% if item.ac_apply %}{{item.ac_apply}}{%endif%}</td>
-                        <td class="statBlock">
-                            {% if hr_max %}
-                            <span class="max">{% if hr_base %} {{hr_base}} {% else %} ? {% endif %}</span>
-                            <div>
-                                <span>{% if hr_max %} {{hr_max}} {% else %} ? {% endif %}</span>
-                                <span>{% if hr_min %} {{hr_min}} {% else %} ? {% endif %}</span>
-                            </div>
-                            {% endif %}
-                        </td>
-                        <td class="statBlock">
-                            {% if dr_max %}
-                            <span class="max">{% if dr_base %} {{dr_base}} {% else %} ? {% endif %}</span>
-                            <div>
-                                <span>{% if dr_max %} {{dr_max}} {% else %} ? {% endif %}</span>
-                                <span>{% if dr_min %} {{dr_min}} {% else %} ? {% endif %}</span>
-                            </div>
-                            {% endif %}
-                        </td>
-                        <td class="statBlock">
+                        <td filter="hp" class="statBlock">
                             {% if hp_max %}
                             <span class="max">{% if hp_base %} {{hp_base}} {% else %} ? {% endif %}</span>
                             <div>
@@ -127,12 +136,30 @@
                             </div>
                             {% endif %}
                         </td>
-                        <td class="statBlock">
+                        <td filter="mana" class="statBlock">
                             {% if mana_max %}
                             <span class="max">{% if mana_base %} {{mana_base}} {% else %} ? {% endif %}</span>
                             <div>
                                 <span>{% if mana_max %} {{mana_max}} {% else %} ? {% endif %}</span>
                                 <span>{% if mana_min %} {{mana_min}} {% else %} ? {% endif %}</span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td filter="hr" class="statBlock">
+                            {% if hr_max %}
+                            <span class="max">{% if hr_base %} {{hr_base}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if hr_max %} {{hr_max}} {% else %} ? {% endif %}</span>
+                                <span>{% if hr_min %} {{hr_min}} {% else %} ? {% endif %}</span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td filter="dr" class="statBlock">
+                            {% if dr_max %}
+                            <span class="max">{% if dr_base %} {{dr_base}} {% else %} ? {% endif %}</span>
+                            <div>
+                                <span>{% if dr_max %} {{dr_max}} {% else %} ? {% endif %}</span>
+                                <span>{% if dr_min %} {{dr_min}} {% else %} ? {% endif %}</span>
                             </div>
                             {% endif %}
                         </td>

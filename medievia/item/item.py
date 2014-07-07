@@ -58,6 +58,11 @@ class Item(medievia.item.item_base.ItemBase):
             else:
                 output = output + "Days Left: {0}\n".format(self.days_left)
 
+        # focus
+        if self.focus is not None:
+            for focus in self.focus:
+                output = output + focus.to_string()
+
         if self.available_weight is not None:
             output = output + "Available Weight: {0} stones\n".format(self.available_weight)
 

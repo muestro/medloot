@@ -2,6 +2,7 @@ import medievia.item.item
 import medievia.item.modifier
 import medievia.item.spell
 import medievia.item.affect
+import medievia.item.focus
 import re
 
 
@@ -56,6 +57,7 @@ def parse(input_obj):
                     _parse_weight(line, item) | \
                     _parse_condition(line, item) | \
                     _parse_days_left(line, item) | \
+                    _parse_focus(line, item) | \
                     _parse_available_weight(line, item) | \
                     _parse_spell(line, item) | \
                     _parse_attributes(line, item) | \
@@ -271,6 +273,22 @@ def _parse_modifiers(input_string, item):
         return False
 
 
+def _parse_focus(input_string, item):
+    if "Focus for:" in input_string:
+        focus = medievia.item.focus.Focus()
+        focus.name = input_string.split()[2].strip()
+        item.focus.append(focus)
+        return True
+
+    elif "Strength: " in input_string:
+        if len(item.focus) > 0:
+            if item.focus[-1].strength is None or item.focus[-1].strength == "":
+                item.focus[-1].strength = input_string.split()[1].strip()
+                return True
+    else:
+        return False
+
+
 def _contains_affect(input_string):
     if "to HITROLL" in input_string or \
        "to DAMROLL" in input_string or \
@@ -297,17 +315,23 @@ def _contains_affect(input_string):
 
 def _contains_modifier(input_string):
     if "to disarm (success)" in input_string or \
+       "to bash (success)" in input_string or \
        "to rage (efficiency)" in input_string or \
        "to parry (success)" in input_string or \
        "to dodge (success)" in input_string or \
        "to disarm (success)" in input_string or \
+       "to defend (proficiency)" in input_string or \
        "to Fireball (proficiency)" in input_string or \
        "to Fireball (manacost)" in input_string or \
        "to Frost Shards (proficiency)" in input_string or \
        "to Dispel Magic (proficiency)" in input_string or \
        "to X-Heal (proficiency)" in input_string or \
+       "to Heal (proficiency)" in input_string or \
        "to Harm (proficiency)" in input_string or \
+       "to Harm (manacost)" in input_string or \
        "to Hammer of Faith (proficiency)" in input_string or \
        "to Demonfire (proficiency)" in input_string or \
+       "to Malediction (success)" in input_string or \
+       "to Flamestrike (proficiency success)" in input_string or \
        "to Dispel Magic (manacost)" in input_string:
         return True
