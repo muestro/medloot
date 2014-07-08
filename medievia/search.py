@@ -74,3 +74,7 @@ def index_count():
 def run_new_search(query_string):
     return medievia.item.item_summary.ItemSummary.query(
         medievia.item.item_summary.ItemSummary.search_terms.IN(query_string.split())).fetch(100)
+
+
+def browse_all():
+    return medievia.item.item_summary.ItemSummary.query().fetch(1000)

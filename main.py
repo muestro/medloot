@@ -82,6 +82,22 @@ class SearchHandler2(webapp2.RequestHandler):
         self.response.out.write(template.render(template_values))
 
 
+class BrowseHandler(webapp2.RequestHandler):
+    def get(self):
+        items = medievia.search.browse_all()
+
+        template_values = {
+            'is_admin_user': is_admin_user(),
+            'user': users.get_current_user(),
+            'signInUrl': users.create_login_url('/'),
+            'signOutUrl': users.create_logout_url('/'),
+            'items': items
+        }
+
+        template = jinja_environment.get_template('templates/browse.html')
+        self.response.out.write(template.render(template_values))
+
+
 class AdminHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
@@ -325,6 +341,7 @@ app = webapp2.WSGIApplication([
     ('/', HomeHandler),
     ('/search', SearchHandler),
     ('/search2', SearchHandler2),
+    ('/browse', BrowseHandler),
     ('/tools', ToolsHandler),
     ('/tools/xpxp/calculate', CalculateXPXPHandler),
 
