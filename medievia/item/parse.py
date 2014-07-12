@@ -300,6 +300,7 @@ def _contains_affect(input_string):
        "to WIS" in input_string or \
        "to DEX" in input_string or \
        "to CON" in input_string or \
+       "to STAMINA" in input_string or \
        "to SAVING_SPELL" in input_string or \
        "to MANA" in input_string or \
        "to SAVING_ROD" in input_string or \
@@ -309,6 +310,7 @@ def _contains_affect(input_string):
        "to SHARP_VULNERABILITY" in input_string or \
        "to HOLY_VULNERABILITY" in input_string or \
        "to AGE" in input_string or \
+       "to MOVE" in input_string or \
        "to SAVING_BREATH" in input_string:
         return True
 
