@@ -143,10 +143,12 @@ def _parse_weight(input_string, item):
     return matched
 
 
+# The object is in fair condition but has some scratches.
 def _parse_condition(input_string, item):
     if "appears to be in" in input_string \
             or "looks as if it will" in input_string \
             or "is visibly worn down" in input_string \
+            or "is in fair condition but has some scratches" in input_string \
             or "is visibly crumbling" in input_string:
         item.condition = input_string.strip()
         return True
@@ -295,6 +297,7 @@ def _contains_affect(input_string):
        "to HIT_POINTS" in input_string or \
        "to INFLUENCE_MELEE" in input_string or \
        "to INFLUENCE_SPELLS" in input_string or \
+       "to INFLUENCE_CLERIC" in input_string or \
        "to STR" in input_string or \
        "to INT" in input_string or \
        "to WIS" in input_string or \
@@ -309,6 +312,7 @@ def _contains_affect(input_string):
        "to BLUNT_VULNERABILITY" in input_string or \
        "to SHARP_VULNERABILITY" in input_string or \
        "to HOLY_VULNERABILITY" in input_string or \
+       "to FIRE_VULNERABILITY" in input_string or \
        "to AGE" in input_string or \
        "to MOVE" in input_string or \
        "to SAVING_BREATH" in input_string:
@@ -332,8 +336,11 @@ def _contains_modifier(input_string):
        "to Harm (proficiency)" in input_string or \
        "to Harm (manacost)" in input_string or \
        "to Hammer of Faith (proficiency)" in input_string or \
+       "to Hammer of Faith (susceptibility)" in input_string or \
        "to Demonfire (proficiency)" in input_string or \
        "to Malediction (success)" in input_string or \
        "to Flamestrike (proficiency success)" in input_string or \
+       "to Dispel Magic (susceptibility)" in input_string or \
+       "to Malediction (susceptibility)" in input_string or \
        "to Dispel Magic (manacost)" in input_string:
         return True
