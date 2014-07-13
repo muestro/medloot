@@ -1,0 +1,114 @@
+.resultList{
+
+}
+
+.lit{
+    font-weight: bold;
+    color: black;
+}
+
+.unlit{
+    font-weight: normal;
+    color: lightgray;
+}
+
+.statBlock {
+    font-size: 11px;
+}
+
+.statBlock div{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.statBlock span{
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.statBlock div span{
+    display: block;
+    color: lightgray;
+}
+
+.statBlock .max{
+    font-size: 200%;
+}
+
+.filterWrapper{
+    border: 1px solid darkgrey;
+    border-radius: 5px;
+    min-width: 300px;
+    text-align: center;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.filterGroupHeading{
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
+    background-color: #F7F5F6;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#F7F5F6), to(#DDDDDD));
+    background-image: -webkit-linear-gradient(top, #F7F5F6, #DDDDDD);
+    background-image: -moz-linear-gradient(top, #F7F5F6, #DDDDDD);
+    background-image: -ms-linear-gradient(top, #F7F5F6, #DDDDDD);
+    background-image: -o-linear-gradient(top, #F7F5F6, #DDDDDD);
+    background-image: linear-gradient(to bottom, #F7F5F6, #DDDDDD);
+    filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#F7F5F6, endColorstr=#DDDDDD);
+}
+
+.filterGroup{
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-bottom: 5px;
+}
+
+.buttonGroup{
+    display: inline-block;
+    margin-left: 50px;
+    -webkit-user-select: none;
+}
+
+button{
+    margin-left: -8px;
+    cursor: pointer;
+
+    background: rgb(255, 255, 255) linear-gradient(rgb(255, 255, 255), rgb(255, 255, 255) 60%, rgb(245, 245, 245)) no-repeat;
+
+    border-image-outset: 0px;
+    border-image-repeat: stretch;
+    border-image-slice: 100%;
+    border-image-source: none;
+    border-image-width: 1;
+    border-radius: 0px;
+    border: 1px solid rgba(0, 0, 0, 0.0980392);
+    border-bottom-color: rgb(230, 230, 230);
+
+    color: rgb(85, 85, 85);
+
+    font-size: 12px;
+    font-weight: bold;
+    height: 22px;
+
+    text-shadow: rgba(0, 0, 0, 0.2) 0px 1px 1px;
+    text-transform: none;
+
+    word-spacing: 0px;
+
+    -webkit-appearance: none;
+    -webkit-user-select: none;
+
+    outline-offset: 0px;
+    outline: rgb(85, 85, 85) none 0px;
+}
+
+.active{
+    background: rgb(235, 235, 235) none;
+
+    box-shadow: rgba(0, 0, 0, 0.121569) 0px 3px 5px 0px inset;
+    color: rgb(85, 85, 85);
+
+    outline-color: rgb(85, 85, 85);
+}

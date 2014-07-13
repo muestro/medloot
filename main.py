@@ -1,19 +1,23 @@
-import webapp2
-import jinja2
 import os
 import time
 import urllib
 import json
+from collections import defaultdict
+
+import webapp2
+import jinja2
 from google.appengine.api import users
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
-from collections import defaultdict
-import medievia.parse
-import medievia.item
+
+import medievia.item.parse
+import medievia.item.item
+import  medievia.item.item_summary
 import medievia.search
 import medievia.admin.administrator
 import medievia.admin.message
 import medievia.xpxp
+
 jinja_environment = jinja2.Environment(autoescape=True,
                                        loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__))))
 
@@ -58,11 +62,47 @@ class SearchHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(template_values))
 
 
+class SearchHandler2(webapp2.RequestHandler):
+    def get(self):
+        query = self.request.get('q')
+
+        if query:
+            items = medievia.search.run_new_search(query)
+
+        template_values = {
+            'is_admin_user': is_admin_user(),
+            'user': users.get_current_user(),
+            'signInUrl': users.create_login_url('/'),
+            'signOutUrl': users.create_logout_url('/'),
+            'items': items,
+            'query': query
+        }
+
+        template = jinja_environment.get_template('templates/search2.html')
+        self.response.out.write(template.render(template_values))
+
+
+class BrowseHandler(webapp2.RequestHandler):
+    def get(self):
+        items = medievia.search.browse_all()
+
+        template_values = {
+            'is_admin_user': is_admin_user(),
+            'user': users.get_current_user(),
+            'signInUrl': users.create_login_url('/'),
+            'signOutUrl': users.create_logout_url('/'),
+            'items': items
+        }
+
+        template = jinja_environment.get_template('templates/browse.html')
+        self.response.out.write(template.render(template_values))
+
+
 class AdminHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
             # get total number of items in database
-            total_in_db = medievia.item.get_item_count()
+            total_in_db = medievia.item.item.get_item_count()
 
             # get total number of items in index
             total_in_index = medievia.search.index_count()
@@ -125,7 +165,7 @@ class AdminItemHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
             item_key = self.request.get('item_key')
-            item = medievia.item.get_item(item_key)
+            item = medievia.item.item.get_item(item_key)
 
             template_values = {
                 'is_admin_user': is_admin_user(),
@@ -139,7 +179,7 @@ class AdminItemHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
-class ParseHandler(webapp2.RequestHandler):
+class SingleParseHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
 
@@ -150,38 +190,41 @@ class ParseHandler(webapp2.RequestHandler):
                 'signOutUrl': users.create_logout_url('/')
             }
 
-            template = jinja_environment.get_template('templates/admin/parse.html')
+            template = jinja_environment.get_template('templates/admin/singleParse.html')
             self.response.out.write(template.render(template_values))
         else:
             self.abort(401)
 
 
-class ParseDoParseHandler(webapp2.RequestHandler):
+class SingleParseDoParseHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
             input_string = self.request.get('input')
-            output_type = self.request.get('type')
-            item = medievia.parse.parse(input_string.splitlines())[0]
+            item = medievia.item.parse.parse(input_string.splitlines())[0]
 
-            if output_type == "xml":
-                self.response.write(item.to_xml())
-            else:
-                self.response.write(item.to_string())
+            self.response.write(item.to_string())
         else:
             self.abort(401)
 
 
-class ParseUploadHandler(webapp2.RequestHandler):
+class SingleParseUploadHandler(webapp2.RequestHandler):
     def post(self):
         if is_admin_user():
             input_string = self.request.get('input')
-            item = medievia.parse.parse(input_string.splitlines())
-            if item and item[0]:
-                medievia.item.create_or_update_item(item[0])
+
+            # create the item via parsing
+            items = medievia.item.parse.parse(input_string.splitlines())
+
+            # create the item summary from an existing item
+            item_summary = medievia.item.item_summary.create_or_update_item_summary(items[0])
+
+            if items and items[0]:
+                medievia.item.item.create_or_update_item(items[0], item_summary)
         else:
             self.abort(401)
 
 
+# upload file
 class FileUploadHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
@@ -199,6 +242,7 @@ class FileUploadHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
+# blobstore calls back to the app after the file has finished uploading
 class FileUploadCallbackHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
@@ -208,6 +252,7 @@ class FileUploadCallbackHandler(blobstore_handlers.BlobstoreUploadHandler):
         self.redirect('/admin/fileParse/%s' % blob_info.key())
 
 
+# the file parse page, which was redirected to by the callback
 class FileParseBlobHandler(webapp2.RequestHandler):
     def get(self, resource):
         resource = str(urllib.unquote(resource))
@@ -215,7 +260,7 @@ class FileParseBlobHandler(webapp2.RequestHandler):
         blob_reader = blobstore.BlobReader(blob_info)
 
         if is_admin_user():
-            items = medievia.parse.parse(blob_reader)
+            items = medievia.item.parse.parse(blob_reader)
             item_dicts = [x.to_dict() for x in items]
 
             template_values = {
@@ -233,6 +278,7 @@ class FileParseBlobHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
+# uploading items from the file parse page
 class FileParseUploadHandler(webapp2.RequestHandler):
     def post(self):
         if is_admin_user():
@@ -242,19 +288,14 @@ class FileParseUploadHandler(webapp2.RequestHandler):
             # determine how many were duplicates
             new_count = 0
             dup_count = 0
-            item_key_names = [medievia.item.get_key_name(item_properties.get('name'), item_properties.get('affects'))
-                              for item_properties in item_list]
-            match_result = medievia.item.Item.get_by_key_name(item_key_names)
-            for match in match_result:
-                if match is None:
+
+            for item_properties in item_list:
+                item = medievia.item.item.Item(**item_properties)
+                item_summary = medievia.item.item_summary.create_or_update_item_summary(item)
+                if medievia.item.item.create_or_update_item(item, item_summary):
                     new_count += 1
                 else:
                     dup_count += 1
-
-            for item_properties in item_list:
-                item_key_name = medievia.item.get_key_name(item_properties.get('name'), item_properties.get('affects'))
-                item = medievia.item.Item(None, item_key_name, **item_properties)
-                medievia.item.create_or_update_item(item)
 
             # return the response with counts
             self.response.out.write("Number of new items: {0}\nNumber of duplicates: {1}".format(new_count, dup_count))
@@ -299,6 +340,8 @@ def is_admin_user():
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
     ('/search', SearchHandler),
+    ('/search2', SearchHandler2),
+    ('/browse', BrowseHandler),
     ('/tools', ToolsHandler),
     ('/tools/xpxp/calculate', CalculateXPXPHandler),
 
@@ -308,9 +351,9 @@ app = webapp2.WSGIApplication([
     ('/admin/removeadmin', AdminRemoveAdminHandler),
 
     # Parse - single item
-    ('/admin/parse', ParseHandler),
-    ('/admin/parse/doParse', ParseDoParseHandler),
-    ('/admin/parse/upload', ParseUploadHandler),
+    ('/admin/singleParse', SingleParseHandler),
+    ('/admin/singleParse/doParse', SingleParseDoParseHandler),
+    ('/admin/singleParse/upload', SingleParseUploadHandler),
 
     # Parse - file
     ('/admin/fileUpload', FileUploadHandler),
@@ -319,4 +362,3 @@ app = webapp2.WSGIApplication([
     ('/admin/fileParse/([^/]+)?', FileParseBlobHandler),
 
     ('/admin/item', AdminItemHandler)], debug=True)
-

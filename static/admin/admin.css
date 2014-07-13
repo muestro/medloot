@@ -4,7 +4,7 @@ body{
 }
 
 .mainContent{
-    width: 1494px;
+    /*width: 1495px;*/
 }
 
 .leftContent{
@@ -80,4 +80,8 @@ a.editLink:visited{
 .messageList{
     padding-left: 0px;
     max-width: 650px;
+}
+
+#error{
+    color: red;
 }
