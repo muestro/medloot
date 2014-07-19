@@ -38,7 +38,7 @@ class HomeHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(template_values))
 
 
-class SearchHandler2(webapp2.RequestHandler):
+class SearchHandler(webapp2.RequestHandler):
     def get(self):
         query = self.request.get('q')
 
@@ -54,7 +54,7 @@ class SearchHandler2(webapp2.RequestHandler):
             'query': query
         }
 
-        template = jinja_environment.get_template('templates/search2.html')
+        template = jinja_environment.get_template('templates/search.html')
         self.response.out.write(template.render(template_values))
 
 
@@ -315,7 +315,7 @@ def is_admin_user():
 
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
-    ('/search2', SearchHandler2),
+    ('/search', SearchHandler),
     ('/browse', BrowseHandler),
     ('/tools', ToolsHandler),
     ('/tools/xpxp/calculate', CalculateXPXPHandler),

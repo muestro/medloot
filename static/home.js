@@ -7,6 +7,6 @@ $(document).ready(function(){
     });
 
     $('#searchIcon').click(function(){
-        window.location.href = '/search2?q=' + encodeURIComponent($('#searchBar').val());
+        window.location.href = '/search?q=' + encodeURIComponent($('#searchBar').val());
     });
 });
