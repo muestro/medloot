@@ -1,28 +1,36 @@
 <!-- filters -->
 <div class="filterWrapper">
     <div class="filterGroupHeading">Filters</div>
-    <div class="filterGroup">
-        <label>Class:</label>
-        <div class="buttonGroup">
-            <button classFilterButton filter="!M">Mage</button>
-            <button classFilterButton filter="!C">Cleric</button>
-            <button classFilterButton filter="!T">Thief</button>
-            <button classFilterButton filter="!W">Warrior</button>
-        </div>
-    </div>
-    <div class="filterGroup">
-        <label>Stats:</label>
-        <div class="buttonGroup">
-            <button numberFilterButton filter="hp">Hp</button>
-            <button numberFilterButton filter="mana">Mana</button>
-            <button numberFilterButton filter="hr">HR</button>
-            <button numberFilterButton filter="dr">DR</button>
-        </div>
-    </div>
-    <div class="filterGroup">
-        <label>Equipable Location:</label>
-        <div id="equipableLocationFilterGroup" class="buttonGroup">
-            <!-- javascript fill in dynamically the options -->
-        </div>
-    </div>
+    <table>
+        <tr class="filterGroup">
+            <td class="filterLabel"><label>Class:</label></td>
+            <td>
+                <div class="buttonGroup">
+                    <button classFilterButton filter="!M">Mage</button>
+                    <button classFilterButton filter="!C">Cleric</button>
+                    <button classFilterButton filter="!T">Thief</button>
+                    <button classFilterButton filter="!W">Warrior</button>
+                </div>
+            </td>
+        </tr>
+        <tr class="filterGroup">
+            <td class="filterLabel"><label>Stats:</label></td>
+            <td>
+                <div class="buttonGroup">
+                    <button numberFilterButton filter="hp">Hp</button>
+                    <button numberFilterButton filter="mana">Mana</button>
+                    <button numberFilterButton filter="hr">HR</button>
+                    <button numberFilterButton filter="dr">DR</button>
+                </div>
+            </td>
+        </tr>
+        <tr class="filterGroup">
+            <td class="filterLabel"><label>Equipable Location:</label></td>
+            <td>
+                <div id="equipableLocationFilterGroup" class="buttonGroup">
+                    <!-- javascript fill in dynamically the options -->
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
