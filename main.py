@@ -38,30 +38,6 @@ class HomeHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(template_values))
 
 
-class SearchHandler(webapp2.RequestHandler):
-    def get(self):
-        query = self.request.get('q')
-        grouped_items = defaultdict(list)
-        template_values = {
-            'is_admin_user': is_admin_user(),
-            'user': users.get_current_user(),
-            'signInUrl': users.create_login_url('/'),
-            'signOutUrl': users.create_logout_url('/'),
-            'grouped_items': grouped_items,
-            'query': query
-        }
-
-        if query:
-            items = medievia.search.run_search(query)
-
-            for item in items:
-                if item is not None:
-                    grouped_items[item.name].append(item)
-
-        template = jinja_environment.get_template('templates/search.html')
-        self.response.out.write(template.render(template_values))
-
-
 class SearchHandler2(webapp2.RequestHandler):
     def get(self):
         query = self.request.get('q')
@@ -339,7 +315,6 @@ def is_admin_user():
 
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
-    ('/search', SearchHandler),
     ('/search2', SearchHandler2),
     ('/browse', BrowseHandler),
     ('/tools', ToolsHandler),

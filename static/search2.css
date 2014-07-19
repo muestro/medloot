@@ -1,5 +1,27 @@
-.resultList{
+.contentContainer{
+    width: 100%;
+    text-align: center;
+}
 
+#resultTable{
+    border-collapse: collapse;
+    margin-left: 40px;
+    display: inline-block;
+}
+
+#resultTable th{
+    background-color: #29395d;
+    color: white;
+}
+
+#resultTable td, th{
+    border-bottom: 1px solid #999;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.resultRow:hover{
+    background-color: #88a2dd;
 }
 
 .lit{
