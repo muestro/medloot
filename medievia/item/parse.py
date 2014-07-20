@@ -334,6 +334,7 @@ def _contains_modifier(input_string):
        "to X-Heal (proficiency)" in input_string or \
        "to Heal (proficiency)" in input_string or \
        "to Harm (proficiency)" in input_string or \
+       "to Heal (susceptibility)" in input_string or \
        "to Harm (manacost)" in input_string or \
        "to Hammer of Faith (proficiency)" in input_string or \
        "to Hammer of Faith (susceptibility)" in input_string or \
