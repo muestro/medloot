@@ -280,7 +280,7 @@ class FileParseUploadHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
-class ToolsHandler(webapp2.RequestHandler):
+class ToolsXPXPHandler(webapp2.RequestHandler):
     def get(self):
         template_values = {
             'is_admin_user': is_admin_user(),
@@ -288,7 +288,7 @@ class ToolsHandler(webapp2.RequestHandler):
             'signInUrl': users.create_login_url('/'),
             'signOutUrl': users.create_logout_url('/')
         }
-        template = jinja_environment.get_template('templates/tools/tools.html')
+        template = jinja_environment.get_template('templates/tools/xpxp.html')
         self.response.out.write(template.render(template_values))
 
 
@@ -299,6 +299,18 @@ class CalculateXPXPHandler(webapp2.RequestHandler):
         full_text = self.request.get('full_text')
 
         self.response.write(json.dumps(medievia.xpxp.parse(moon, eclipse, full_text)))
+
+
+class ToolsAutoQuestHandler(webapp2.RequestHandler):
+    def get(self):
+        template_values = {
+            'is_admin_user': is_admin_user(),
+            'user': users.get_current_user(),
+            'signInUrl': users.create_login_url('/'),
+            'signOutUrl': users.create_logout_url('/')
+        }
+        template = jinja_environment.get_template('templates/tools/autoquest.html')
+        self.response.out.write(template.render(template_values))
 
 
 def is_admin_user():
@@ -317,8 +329,9 @@ app = webapp2.WSGIApplication([
     ('/', HomeHandler),
     ('/search', SearchHandler),
     ('/browse', BrowseHandler),
-    ('/tools', ToolsHandler),
+    ('/tools/xpxp', ToolsXPXPHandler),
     ('/tools/xpxp/calculate', CalculateXPXPHandler),
+    ('/tools/autoquest', ToolsAutoQuestHandler),
 
     ('/admin', AdminHandler),
     ('/admin/updateIndexes', AdminUpdateIndexesHandler),

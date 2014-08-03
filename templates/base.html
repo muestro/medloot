@@ -17,19 +17,23 @@
             <li><a href="/browse">Browse</a></li>
         </ul>
         <ul class="topBannerRight">
-            <li><a href="/tools">Tools</a></li>
+            <li>
+                <a href="#">Tools</a>
+                <ul>
+                    <li><a href="/tools/autoquest">Autoquest</a></li>
+                    <li><a href="/tools/xpxp">XPXP</a></li>
+                </ul>
+            </li>
             <li class="admin">
                 {% if is_admin_user %}
-                <div>
-                    <a href="/admin">Admin</a>
-                </div>
+                <a href="/admin">Admin</a>
                 {% endif %}
             </li>
             {% if user %}
             <li id="userInfoItem">
                 <div>
                     <span id="email" class="email" style="display: block;">{{ user.email() }}</span>
-                    <a id="signOut" class="signOut" href="{{ signOutUrl }}" style="display: block;">Sign out</a>
+                    <div style="display: block"><a id="signOut" class="signOut" href="{{ signOutUrl }}">Sign out</a></div>
                 </div>
                 <img src="/static/silhouette.png" />
             </li>
@@ -39,6 +43,7 @@
             </li>
             {% endif %}
         </ul>
+        <div style="clear: both;"></div>
     </div>
     <div id="content">{% block content %}{% endblock %}</div>
 </body>
