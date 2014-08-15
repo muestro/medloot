@@ -313,6 +313,18 @@ class ToolsAutoQuestHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(template_values))
 
 
+class ToolsCTMapHandler(webapp2.RequestHandler):
+    def get(self):
+        template_values = {
+            'is_admin_user': is_admin_user(),
+            'user': users.get_current_user(),
+            'signInUrl': users.create_login_url('/'),
+            'signOutUrl': users.create_logout_url('/')
+        }
+        template = jinja_environment.get_template('templates/tools/ct_map.html')
+        self.response.out.write(template.render(template_values))
+
+
 def is_admin_user():
     try:
         user = users.get_current_user()
@@ -332,6 +344,7 @@ app = webapp2.WSGIApplication([
     ('/tools/xpxp', ToolsXPXPHandler),
     ('/tools/xpxp/calculate', CalculateXPXPHandler),
     ('/tools/autoquest', ToolsAutoQuestHandler),
+    ('/tools/ctmap', ToolsCTMapHandler),
 
     ('/admin', AdminHandler),
     ('/admin/updateIndexes', AdminUpdateIndexesHandler),

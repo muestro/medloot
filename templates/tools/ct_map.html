@@ -1,0 +1,16 @@
+{% extends "templates/base.html" %}
+
+{% block title %}Tools - CT Map{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link type="text/css" rel="stylesheet" href="/static/tools/tools.css" />
+    <link type="text/css" rel="stylesheet" href="/static/tools/ct_map.css" />
+    <script src="/static/tools/tools.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="mapContainer">
+        <img height="800" width="800" src="/static/med_ct_map.png">
+    </div>
+{% endblock %}
