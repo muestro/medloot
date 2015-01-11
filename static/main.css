@@ -5,6 +5,10 @@ body{
     font-family: "open sans", sans-serif;
 }
 
+#content{
+    font-family: Merriweather, Georgia, Times, serif;;
+}
+
 ul{
     list-style: none;
     -webkit-margin-before: 0em;
