@@ -44,6 +44,8 @@ class SearchHandler(webapp2.RequestHandler):
 
         if query:
             items = medievia.search.run_new_search(query)
+        else:
+            items = None
 
         template_values = {
             'is_admin_user': is_admin_user(),
