@@ -74,18 +74,22 @@ class Item(medievia.item.item_base.ItemBase):
         if self.attributes:
             output = output + "Attributes: {0}\n".format(" ".join(self.attributes))
 
+        # class restrictions
+        if self.class_restrictions:
+            output = output + "Class Restrictions: {0}\n".format(" ".join(self.class_restrictions))
+
         # damage dice
         if self.damage_dice1 is not None and self.damage_dice2 is not None:
-            output = output + "Damage Dice of {0}d{1}\n".format(self.damage_dice1, self.damage_dice2)
+            if self.missile_damage is None:
+                output = output + "Damage Dice of {0}d{1}\n".format(self.damage_dice1, self.damage_dice2)
+            else:
+                output = output + "Damage Dice of {0}d{1} and modifies missile damage by {2}\n"\
+                    .format(self.damage_dice1, self.damage_dice2, self.missile_damage)
 
         # spells
         if self.spells:
             for spell in self.spells:
                 output = output + spell.to_string()
-
-        # class restrictions
-        if self.class_restrictions:
-            output = output + "Class Restrictions: {0}\n".format(" ".join(self.class_restrictions))
 
         # affects
         if self.affects and self.affects > 0:

@@ -2,6 +2,7 @@ import os
 import time
 import urllib
 import json
+import logging
 from collections import defaultdict
 
 import webapp2
@@ -9,13 +10,15 @@ import jinja2
 from google.appengine.api import users
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
+from google.appengine.ext.webapp.mail_handlers import InboundMailHandler
 
 import medievia.item.parse
 import medievia.item.item
-import  medievia.item.item_summary
+import medievia.item.item_summary
 import medievia.search
 import medievia.admin.administrator
 import medievia.admin.message
+import medievia.admin.artifact
 import medievia.xpxp
 
 jinja_environment = jinja2.Environment(autoescape=True,
@@ -202,7 +205,6 @@ class SingleParseUploadHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
-# upload file
 class FileUploadHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
@@ -216,6 +218,67 @@ class FileUploadHandler(webapp2.RequestHandler):
             }
             template = jinja_environment.get_template('templates/admin/fileupload.html')
             self.response.out.write(template.render(template_values))
+        else:
+            self.abort(401)
+
+
+# initial input screen for direct input
+class DirectParseHandler(webapp2.RequestHandler):
+    def get(self):
+        if is_admin_user():
+
+            template_values = {
+                'is_admin_user': is_admin_user(),
+                'user': users.get_current_user(),
+                'signInUrl': users.create_login_url('/'),
+                'signOutUrl': users.create_logout_url('/')
+            }
+
+            template = jinja_environment.get_template('templates/admin/directParse.html')
+            self.response.out.write(template.render(template_values))
+        else:
+            self.abort(401)
+
+
+# process the input, client side will redirect to results
+class DirectParseDoParseHandler(webapp2.RequestHandler):
+    def post(self):
+        if is_admin_user():
+            input_string = self.request.get('input')
+            admin_alias = medievia.admin.administrator.get(email=users.get_current_user().email()).alias
+
+            artifact = medievia.admin.artifact.Artifact(value=input_string, submitter=admin_alias)
+            artifact_key = artifact.put()
+
+            self.response.out.write(artifact_key.urlsafe())
+        else:
+            self.abort(401)
+
+
+class DirectParseShowResultHandler(webapp2.RequestHandler):
+    def get(self, resource):
+        if is_admin_user():
+            resource = str(urllib.unquote(resource))
+            artifact = medievia.admin.artifact.get(resource)
+            if artifact:
+                # parse the string
+                items = medievia.item.parse.parse(artifact.value.splitlines())
+                item_dicts = [x.to_dict() for x in items]
+
+                template_values = {
+                    'is_admin_user': is_admin_user(),
+                    'user': users.get_current_user(),
+                    'signInUrl': users.create_login_url('/'),
+                    'signOutUrl': users.create_logout_url('/'),
+                    'items': items,
+                    'item_dicts': item_dicts
+                }
+
+                template = jinja_environment.get_template('templates/admin/fileparse.html')
+                self.response.out.write(template.render(template_values))
+            #else:
+                # return a message saying bad key
+
         else:
             self.abort(401)
 
@@ -327,6 +390,11 @@ class ToolsCTMapHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(template_values))
 
 
+class MailHandler(InboundMailHandler):
+    def receive(self, mail_message):
+        logging.info("Received a message from: " + mail_message.sender)
+
+
 def is_admin_user():
     try:
         user = users.get_current_user()
@@ -357,6 +425,11 @@ app = webapp2.WSGIApplication([
     ('/admin/singleParse', SingleParseHandler),
     ('/admin/singleParse/doParse', SingleParseDoParseHandler),
     ('/admin/singleParse/upload', SingleParseUploadHandler),
+
+    # Parse - direct
+    ('/admin/parse/direct', DirectParseHandler),
+    ('/admin/parse/direct/doParse', DirectParseDoParseHandler),
+    ('/admin/parse/direct/([^/]+)', DirectParseShowResultHandler),
 
     # Parse - file
     ('/admin/fileUpload', FileUploadHandler),

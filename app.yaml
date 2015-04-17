@@ -7,6 +7,9 @@ libraries:
 - name: jinja2
   version: latest
 
+inbound_services:
+- mail
+
 handlers:
 - url: /favicon.ico
   static_files: static/favicon.ico
@@ -19,6 +22,10 @@ handlers:
   script: main.app
   login: required
   secure: always
+
+- url: /_ah/mail/support@.*medloot\.appspotmail\.com
+  script: mail.app
+  login: admin
 
 - url: .*
   script: main.app

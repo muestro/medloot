@@ -1,0 +1,26 @@
+{% extends "templates/base.html" %}
+
+{% block title %}Direct Parse{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <script src="/static/admin/admin.js"></script>
+    <script src="/static/admin/directParse.js"></script>
+    <link type="text/css" rel="stylesheet" href="/static/admin/admin.css" />
+{% endblock %}
+
+{% block content %}
+    <div class="mainContent">
+        <ul>
+            <li>
+                <h2>Direct Parse</h2>
+            </li>
+            <li style="padding-bottom: 20px;">
+                <button id="parseButton">Parse</button>
+            </li>
+            <li>
+                <textarea id='input' placeholder='Input goes here.' style="width: 85%; height: 400px;"></textarea>
+            </li>
+        </ul>
+    </div>
+{% endblock %}

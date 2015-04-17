@@ -33,6 +33,8 @@ class ItemBase(ndb.Model):
 
     damage_dice1 = ndb.IntegerProperty()
     damage_dice2 = ndb.IntegerProperty()
+    missile_damage = ndb.FloatProperty()
+
     ac_apply = ndb.IntegerProperty()
     focus = ndb.StructuredProperty(medievia.item.focus.Focus, repeated=True)
 

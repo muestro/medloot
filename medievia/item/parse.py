@@ -3,6 +3,7 @@ import medievia.item.modifier
 import medievia.item.spell
 import medievia.item.affect
 import medievia.item.focus
+import medievia.item.parse_single
 import re
 
 
@@ -27,6 +28,16 @@ def parse(input_obj):
 
         # normalize the spaces
         line = re.sub(' +', ' ', line)
+
+        # Single line item processing
+        if medievia.item.parse_single.is_single_line_item(line):
+            item = medievia.item.parse_single.parse(line)
+            if item is not None and item.is_populated():
+                item.source_string += raw_string
+                items.append(item)
+            item = None
+            stale_count = 0
+            continue
 
         if _is_beginning_of_item(line):
             if item is not None and item.is_populated():
@@ -145,11 +156,7 @@ def _parse_weight(input_string, item):
 
 # The object is in fair condition but has some scratches.
 def _parse_condition(input_string, item):
-    if "appears to be in" in input_string \
-            or "looks as if it will" in input_string \
-            or "is visibly worn down" in input_string \
-            or "is in fair condition but has some scratches" in input_string \
-            or "is visibly crumbling" in input_string:
+    if input_string in medievia.item.parse_single.condition_strings.values():
         item.condition = input_string.strip()
         return True
     else:
@@ -198,8 +205,13 @@ def _parse_attributes(input_string, item):
 
 def _parse_damage_dice(input_string, item):
     if "Damage Dice of" in input_string:
-        item.damage_dice1 = int(input_string.split("Damage Dice of")[1].strip().split("d")[0])
-        item.damage_dice2 = int(input_string.split("Damage Dice of")[1].strip().split("d")[1])
+        damage_dice_string = input_string.split("Damage Dice of")[1].strip().split()[0]
+        item.damage_dice1 = int(damage_dice_string.split("d")[0])
+        item.damage_dice2 = int(damage_dice_string.split("d")[1])
+
+        if "and modifies missile damage by" in input_string:
+            item.missile_damage = float(input_string.split("and modifies missile damage by")[1].strip())
+
         return True
     else:
         return False
