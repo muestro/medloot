@@ -115,131 +115,139 @@ def is_single_line_item(input_string):
 
 
 # a massive battleplate - Lev(23) Loc(body) AM AT AW AC-ap(8) AE hps(37) ss(-2) Cond(any day - Egged - fnt grn - 49 Days)
-def parse(input_string):
-    item = medievia.item.item.Item()
+def parse(input_string, auction_name):
+    try:
+        item = medievia.item.item.Item()
 
-    # remove beginning and end noise
-    input_string = remove_noise(input_string)
+        # remove beginning and end noise
+        input_string = remove_noise(input_string)
 
-    # name
-    name = input_string.split(" - Lev")[0]
-    if ">" in name:
-        name = name.split(">")[1].strip()
-    item.name = name
+        # name
+        if auction_name:
+            name = auction_name
+        else:
+            name = input_string.split(" - Lev")[0]
+            if ">" in name:
+                name = name.split(">")[1].strip()
+        item.name = name
 
-    # level
-    level = int(input_string.split("Lev(")[1].split(")")[0].strip())
-    item.level_restriction = level
+        # level
+        level = int(input_string.split("Lev(")[1].split(")")[0].strip())
+        item.level_restriction = level
 
-    # equipable locations
-    equipable_locations = input_string.split("Loc(")[1].split(")")[0].strip().upper().split()
-    equipable_locations = [equipable_location_strings[el] if el in equipable_location_strings.keys() else el
-                           for el in equipable_locations]
-    item.equipable_locations = equipable_locations
+        # equipable locations
+        equipable_locations = input_string.split("Loc(")[1].split(")")[0].strip().upper().split()
+        equipable_locations = [equipable_location_strings[el] if el in equipable_location_strings.keys() else el
+                               for el in equipable_locations]
+        item.equipable_locations = equipable_locations
 
-    # condition
-    condition = input_string.split("Cond(")[1].split(")")[0].strip().split(" - ")[0]
-    if condition in condition_strings.keys():
-        item.condition = condition_strings[condition]
+        # condition
+        condition = input_string.split("Cond(")[1].split(")")[0].strip().split(" - ")[0]
+        if condition in condition_strings.keys():
+            item.condition = condition_strings[condition]
 
-    # days left
-    days_left = input_string.split("Cond(")[1].split(")")[0].strip().split(" - ")
-    days_left = days_left[-1].split(" ")[0]
-    if days_left == "Infinity":
-        days_left = -1
-    item.days_left = int(days_left)
+        # days left
+        days_left = input_string.split("Cond(")[1].split(")")[0].strip().split(" - ")
+        days_left = days_left[-1].split(" ")[0]
+        if days_left == "Infinity":
+            days_left = -1
+        # round the number up
+        item.days_left = int(float(days_left)+0.5)
 
-    # missile damage
-    if " missile by " in input_string:
-        item.missile_damage = float(input_string.split("missile by ")[1].split()[0].strip())
+        # missile damage
+        if " missile by " in input_string:
+            item.missile_damage = float(input_string.split("missile by ")[1].split()[0].strip())
 
-    # skl/spl
-    # X-Heal (proficiency +8%) Harm (proficiency -48%) Hammer of Faith (proficiency -48%) Demonfire (proficiency -49%)
-    if "SKL/SPL:" in input_string:
-        skill_spell_input_string = input_string.split("SKL/SPL:")[1].strip().split("Cond(")[0].strip()
-        spell_skill_groups = re.findall(r"([^\(]+) \((\w+) ([\+-][\d]+)%\)", skill_spell_input_string)
-        for spell_skill_group in spell_skill_groups:
-            # [('X-Heal', 'proficiency', '+8'), ('Harm', 'proficiency', '-48'), ('Faith', 'proficiency', '-48'),
-            #   ('Demonfire', 'proficiency', '-49')]
-            modifier = medievia.item.modifier.Modifier()
-            modifier.name = spell_skill_group[0].strip()
-            modifier.descriptor = spell_skill_group[1].strip()
-            modifier.value = int(spell_skill_group[2].strip())
-            item.modifiers.append(modifier)
+        # skl/spl
+        # X-Heal (proficiency +8%) Harm (proficiency -48%) Hammer of Faith (proficiency -48%) Demonfire (proficiency -49%)
+        if "SKL/SPL:" in input_string:
+            skill_spell_input_string = input_string.split("SKL/SPL:")[1].strip().split("Cond(")[0].strip()
+            spell_skill_groups = re.findall(r"([^\(]+) \((\w+) ([\+-][\d]+)%\)", skill_spell_input_string)
+            for spell_skill_group in spell_skill_groups:
+                # [('X-Heal', 'proficiency', '+8'), ('Harm', 'proficiency', '-48'), ('Faith', 'proficiency', '-48'),
+                #   ('Demonfire', 'proficiency', '-49')]
+                modifier = medievia.item.modifier.Modifier()
+                modifier.name = spell_skill_group[0].strip()
+                modifier.descriptor = spell_skill_group[1].strip()
+                modifier.value = int(spell_skill_group[2].strip())
+                item.modifiers.append(modifier)
 
-    # trim the string to just contain affects, modifiers, restrictions
-    inner_input_string = input_string\
-        .split("Loc(")[1].split(") ", 1)[1].strip()\
-        .split("Cond(")[0].strip()\
-        .split("SKL/SPL:")[0].strip()
+        # trim the string to just contain affects, modifiers, restrictions
+        inner_input_string = input_string\
+            .split("Loc(")[1].split(") ", 1)[1].strip()\
+            .split("Cond(")[0].strip()\
+            .split("SKL/SPL:")[0].strip()
 
-    # AM AT AW AC-ap(8) AE hps(37) ss(-2)
-    class_restrictions = set()
-    affects = []
-    effects = []
-    attributes = []
-    spells = []
-    for property_string in inner_input_string.split():
-        # damage dice check
-        if re.match(r"(\d+)d(\d+)", property_string):
-            damage_dice = re.findall(r"\d+", property_string)
-            item.damage_dice1 = int(damage_dice[0])
-            item.damage_dice2 = int(damage_dice[1])
+        # AM AT AW AC-ap(8) AE hps(37) ss(-2)
+        class_restrictions = set()
+        affects = []
+        effects = []
+        attributes = []
+        spells = []
+        for property_string in inner_input_string.split():
+            # damage dice check
+            if re.match(r"(\d+)d(\d+)", property_string):
+                damage_dice = re.findall(r"\d+", property_string)
+                item.damage_dice1 = int(damage_dice[0])
+                item.damage_dice2 = int(damage_dice[1])
 
-        # restriction check
-        if property_string in class_restriction_strings.keys():
-            class_restrictions.add(class_restriction_strings[property_string])
-            continue
-
-        # AC check
-        if "AC-ap" in property_string:
-            item.ac_apply = int(property_string.split("(")[1].strip(")"))
-            continue
-
-        # effect check
-        if property_string in effect_strings.keys():
-            effects.append(effect_strings[property_string])
-            continue
-
-        # attribute check
-        if property_string in attribute_strings.keys():
-            attributes.append(attribute_strings[property_string])
-            continue
-
-        # spells check - Eat(Sanctuary) - 5xResurrect
-        if "Eat(" in property_string:
-            spell = medievia.item.spell.Spell()
-            spell.name = property_string.split("Eat(")[1].strip(")")
-            spell.eaten = True
-            spells.append(spell)
-            continue
-
-        spell_regex_match = re.match(r"(\d+)x(\w+)", property_string)
-        if spell_regex_match:
-            spell = medievia.item.spell.Spell()
-            spell.name = spell_regex_match.group(2)
-            spells.append(spell)
-            # note we don't get max charges in single line format, only remaining charges which we don't care about
-
-        # affect check
-        # affects have name(value) format
-        if "(" in property_string and ")" in property_string:
-            property_name = property_string.split("(")[0]
-            property_value = int(property_string.split("(")[1].strip(")"))
-
-            if property_name in affect_strings.keys():
-                affect = medievia.item.affect.Affect()
-                affect.name = affect_strings[property_name]
-                affect.value = property_value
-                affects.append(affect)
+            # restriction check
+            if property_string in class_restriction_strings.keys():
+                class_restrictions.add(class_restriction_strings[property_string])
                 continue
 
-        # modifier check
+            # AC check
+            if "AC-ap" in property_string:
+                item.ac_apply = int(property_string.split("(")[1].strip(")"))
+                continue
 
-    item.effects = effects
-    item.affects = affects
-    item.class_restrictions = class_restrictions
-    item.attributes = attributes
-    item.spells = spells
+            # effect check
+            if property_string in effect_strings.keys():
+                effects.append(effect_strings[property_string])
+                continue
 
+            # attribute check
+            if property_string in attribute_strings.keys():
+                attributes.append(attribute_strings[property_string])
+                continue
+
+            # spells check - Eat(Sanctuary) - 5xResurrect
+            if "Eat(" in property_string:
+                spell = medievia.item.spell.Spell()
+                spell.name = property_string.split("Eat(")[1].strip(")")
+                spell.eaten = True
+                spells.append(spell)
+                continue
+
+            # Lev(0) Loc(hold) 4xSanctuary -   nostore Cond(pristine - 45.00 Days)
+            spell_regex_match = re.match(r"(\d+)x(\w+)", property_string)
+            if spell_regex_match:
+                spell = medievia.item.spell.Spell()
+                spell.name = spell_regex_match.group(2)
+                spells.append(spell)
+                # note we don't get max charges in single line format, only remaining charges which we don't care about
+
+            # affect check
+            # affects have name(value) format
+            if "(" in property_string and ")" in property_string:
+                property_name = property_string.split("(")[0]
+                property_value = int(property_string.split("(")[1].strip(")"))
+
+                if property_name in affect_strings.keys():
+                    affect = medievia.item.affect.Affect()
+                    affect.name = affect_strings[property_name]
+                    affect.value = property_value
+                    affects.append(affect)
+                    continue
+
+            # modifier check
+
+        item.effects = effects
+        item.affects = affects
+        item.class_restrictions = class_restrictions
+        item.attributes = attributes
+        item.spells = spells
+    except Exception as e:
+        print "Error occured while parsing a single line.\nError:{0}\nInput line:{1}\n".format(e.message, input_string)
+        return None
     return item

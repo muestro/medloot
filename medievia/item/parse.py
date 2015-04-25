@@ -12,6 +12,8 @@ import re
 def parse(input_obj):
     items = []
     item = None
+    auction_name = None
+    auction_source_string = None
 
     stale_count = 0
 
@@ -30,12 +32,23 @@ def parse(input_obj):
         line = re.sub(' +', ' ', line)
 
         # Single line item processing
+        if '***AUCTION:***' in line and 'in slot' in line and 'minimum bid' in line:
+            # beginning of an auction line e.g.
+            # ***AUCTION:*** an acid hammer in slot B, minimum bid: 1,000,000, auctioneer: Raidain.
+            # Lev(27) Loc(wield) AM AC 2H 5d12 NoBits hr(5) dr(5) Cond(pristine - Infinity Days)
+            auction_name = line.strip('***AUCTION:***').strip().split('in slot')[0].strip()
+            auction_source_string = raw_string
+
         if medievia.item.parse_single.is_single_line_item(line):
-            item = medievia.item.parse_single.parse(line)
+            item = medievia.item.parse_single.parse(line, auction_name=auction_name)
             if item is not None and item.is_populated():
+                if auction_name:
+                    item.source_string += auction_source_string
                 item.source_string += raw_string
                 items.append(item)
             item = None
+            auction_name = None
+            auction_source_string = None
             stale_count = 0
             continue
 
