@@ -99,7 +99,6 @@
 }
 
 button{
-    margin-left: -7px;
     cursor: pointer;
 
     background: rgb(255, 255, 255) linear-gradient(rgb(255, 255, 255), rgb(255, 255, 255) 60%, rgb(245, 245, 245)) no-repeat;
