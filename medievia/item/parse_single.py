@@ -43,8 +43,9 @@ effect_strings = {
 
 attribute_strings = {
     'DAG': 'DAGGER',
-    'BSER': 'BACKSTABBER'
-    # 2 handed?
+    'BSER': 'BACKSTABBER',
+    # 2 handed? -- i think is in class restrictions
+    'LNG': 'LONG' # i think should be here
 }
 
 affect_strings = {'hr': 'HITROLL',
@@ -115,7 +116,7 @@ def is_single_line_item(input_string):
 
 
 # a massive battleplate - Lev(23) Loc(body) AM AT AW AC-ap(8) AE hps(37) ss(-2) Cond(any day - Egged - fnt grn - 49 Days)
-def parse(input_string, auction_name):
+def parse(input_string, item_name):
     try:
         item = medievia.item.item.Item()
 
@@ -123,8 +124,8 @@ def parse(input_string, auction_name):
         input_string = remove_noise(input_string)
 
         # name
-        if auction_name:
-            name = auction_name
+        if item_name:
+            name = item_name
         else:
             name = input_string.split(" - Lev")[0]
             if ">" in name:
