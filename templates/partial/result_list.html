@@ -1,6 +1,16 @@
 {% if items and (items|length > 0) %}
 <table id="resultTable">
     <thead>
+        <tr class="topHeaderRow">
+            <th colspan="9" class="clearHeader"></th>
+            <th colspan="2" class="bordered">Influence</th>
+            <th colspan="3" class="bordered">Saving throws</th>
+        </tr>
+        <tr class="spacerHeaderRow">
+            <th colspan="9" class="clearHeader"></th>
+            <th colspan="2" class="clearHeader"></th>
+            <th colspan="3" class="clearHeader"></th>
+        </tr>
         <tr>
             <th>Name</th>
             <th>Level</th>
@@ -11,11 +21,11 @@
             <th>Mana</th>
             <th>HR</th>
             <th>DR</th>
-            <th>Inf_Melee</th>
-            <th>Inf_Spells</th>
-            <th>SS</th>
-            <th>SB</th>
-            <th>SR</th>
+            <th>Melee</th>
+            <th>Spells</th>
+            <th>Spell</th>
+            <th>Breath</th>
+            <th>Rod</th>
         </tr>
     </thead>
     <tbody class="resultList">
@@ -59,9 +69,9 @@
 
             {% set oindex = loop.index %}
             <tr id="resultRow{{ oindex }}-{{ loop.index }}" class="resultRow" rowNum="{{ oindex }}-{{ loop.index }}">
-                <td>{{ item.name }}</td>
-                <td>{% if item.level_restriction != 0 %}{{ item.level_restriction }}{% endif %}</td>
-                <td filter="equipableLocation">
+                <td class="nameColumn">{{ item.name }}</td>
+                <td>{% if item.level_restriction != 0 %}{{ item.level_restriction }}{% else %}---{% endif %}</td>
+                <td class="locationColumn" filter="equipableLocation">
                     {% if item.equipable_locations|length > 1 %}
                         {% for location in item.equipable_locations %}{{location}} <br />{% endfor %}
                     {% else %}
@@ -74,7 +84,7 @@
                     <span class="{% if item.is_anti_thief() %}lit{% endif %}">!T</span>
                     <span class="{% if item.is_anti_warrior() %}lit{% endif %}">!W</span>
                 </td>
-                <td>{% if item.ac_apply %}{{item.ac_apply}}{%endif%}</td>
+                <td>{% if item.ac_apply %}{{item.ac_apply}}{% else %}---{%endif%}</td>
                 <td filter="hp" class="statBlock">
                     {% if hp_max %}
                     <span class="max">{% if hp_base %} {{hp_base}} {% else %} ? {% endif %}</span>
@@ -82,6 +92,8 @@
                         <span>{% if hp_max %} {{hp_max}} {% else %} ? {% endif %}</span>
                         <span>{% if hp_min %} {{hp_min}} {% else %} ? {% endif %}</span>
                     </div>
+                    {% else %}
+                    ---
                     {% endif %}
                 </td>
                 <td filter="mana" class="statBlock">
@@ -91,6 +103,8 @@
                         <span>{% if mana_max %} {{mana_max}} {% else %} ? {% endif %}</span>
                         <span>{% if mana_min %} {{mana_min}} {% else %} ? {% endif %}</span>
                     </div>
+                    {% else %}
+                    ---
                     {% endif %}
                 </td>
                 <td filter="hr" class="statBlock">
@@ -100,6 +114,8 @@
                         <span>{% if hr_max %} {{hr_max}} {% else %} ? {% endif %}</span>
                         <span>{% if hr_min %} {{hr_min}} {% else %} ? {% endif %}</span>
                     </div>
+                    {% else %}
+                    ---
                     {% endif %}
                 </td>
                 <td filter="dr" class="statBlock">
@@ -109,6 +125,8 @@
                         <span>{% if dr_max %} {{dr_max}} {% else %} ? {% endif %}</span>
                         <span>{% if dr_min %} {{dr_min}} {% else %} ? {% endif %}</span>
                     </div>
+                    {% else %}
+                    ---
                     {% endif %}
                 </td>
                 <td class="statBlock">
@@ -118,6 +136,8 @@
                         <span>{% if infmelee_max %} {{infmelee_max}} {% else %} ? {% endif %}</span>
                         <span>{% if infmelee_min %} {{infmelee_min}} {% else %} ? {% endif %}</span>
                     </div>
+                    {% else %}
+                    ---
                     {% endif %}
                 </td>
                 <td class="statBlock">
@@ -127,6 +147,8 @@
                         <span>{% if infspells_max %} {{infspells_max}} {% else %} ? {% endif %}</span>
                         <span>{% if infspells_min %} {{infspells_min}} {% else %} ? {% endif %}</span>
                     </div>
+                    {% else %}
+                    ---
                     {% endif %}
                 </td>
                 <td class="statBlock">
@@ -136,6 +158,8 @@
                         <span>{% if ss_max %} {{ss_max}} {% else %} ? {% endif %}</span>
                         <span>{% if ss_min %} {{ss_min}} {% else %} ? {% endif %}</span>
                     </div>
+                    {% else %}
+                    ---
                     {% endif %}
                 </td>
                 <td class="statBlock">
@@ -145,6 +169,8 @@
                         <span>{% if sb_max %} {{sb_max}} {% else %} ? {% endif %}</span>
                         <span>{% if sb_min %} {{sb_min}} {% else %} ? {% endif %}</span>
                     </div>
+                    {% else %}
+                    ---
                     {% endif %}
                 </td>
                 <td class="statBlock">
@@ -154,6 +180,8 @@
                         <span>{% if sr_max %} {{sr_max}} {% else %} ? {% endif %}</span>
                         <span>{% if sr_min %} {{sr_min}} {% else %} ? {% endif %}</span>
                     </div>
+                    {% else %}
+                    ---
                     {% endif %}
                 </td>
             </tr>

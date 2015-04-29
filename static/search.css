@@ -12,13 +12,44 @@
 #resultTable th{
     background-color: #29395d;
     color: white;
+    height: 15px;
+    font-size: small;
+    text-align: center;
+}
+
+#resultTable tr.spacerHeaderRow th {
+    height: 10px;
+    padding: 0px;
+}
+
+#resultTable tr.topHeaderRow th.bordered {
+    border-bottom: 2px solid #999999;
+    border-left: 10px solid white;
+    border-right: 10px solid white;
+}
+
+#resultTable tr.topHeaderRow th {
+    font-size: small;
+    text-align: center;
+    background-color: transparent;
+    color: #999999;
+    padding: 6px;
+}
+
+#resultTable th.clearHeader {
+    background-color: transparent;
 }
 
 #resultTable td, th{
-    border-bottom: 1px solid #999;
     padding: 0.5rem;
-    text-align: left;
+    padding-left: 4px;
+    padding-right: 4px;
+    text-align: center;
     max-width: 270px;
+}
+
+#resultTable td.nameColumn, td.locationColumn {
+    text-align: left;
 }
 
 .resultRow:hover{
@@ -37,7 +68,7 @@
 
 .statBlock {
     font-size: 11px;
-    min-width: 52px;
+    min-width: 50px;
 }
 
 .statBlock div{
