@@ -3,6 +3,11 @@
     text-align: center;
 }
 
+#filterTable {
+    border-collapse: collapse;
+    margin-bottom: 5px;
+}
+
 #resultTable{
     border-collapse: collapse;
     margin-left: 40px;
@@ -66,6 +71,10 @@
     color: lightgray;
 }
 
+.emptyBlock {
+    font-size: 11px;
+}
+
 .statBlock {
     font-size: 11px;
     min-width: 50px;
@@ -112,10 +121,17 @@
     background-image: -o-linear-gradient(top, #F7F5F6, #DDDDDD);
     background-image: linear-gradient(to bottom, #F7F5F6, #DDDDDD);
     filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#F7F5F6, endColorstr=#DDDDDD);
+
+    margin-bottom: 5px;
 }
 
 .filterGroup{
     text-align: left;
+}
+
+.dynamicFilterGroup {
+    text-align: left;
+    display: none;
 }
 
 .filterLabel{
@@ -123,9 +139,10 @@
    text-align: right;
 }
 
-.buttonGroup{
+.filterButtonGroup {
     display: inline-block;
     margin-left: 20px;
+    margin-right: 12px;
     -webkit-user-select: none;
 }
 
