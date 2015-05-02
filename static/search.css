@@ -104,6 +104,7 @@
     border: 1px solid darkgrey;
     border-radius: 5px;
     min-width: 300px;
+    max-width: 750px;
     text-align: center;
     display: inline-block;
     margin-bottom: 15px;
@@ -185,4 +186,31 @@ button{
     color: rgb(85, 85, 85);
 
     outline-color: rgb(85, 85, 85);
+}
+
+/* key classes */
+.keyContainer {
+    text-align: left;
+    display: inline-block;
+    margin-left: 30px;
+}
+
+.keyLabel {
+    color: #999;
+    padding-bottom: 3px;
+    display: inline-block;
+}
+
+.keyTable {
+    color: #999;
+    border: 1px solid #999;
+}
+
+.keyBaseLabel {
+    font-size: x-large;
+    height: 70px;
+}
+
+.keyMinMaxLabel {
+    font-size: small;
 }
