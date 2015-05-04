@@ -36,7 +36,7 @@ def parse(input_obj):
         if 'Item:' in line and 'coins]' in line:
             # Item: X a red crystal hourglass [1,000,000 coins]
             # Lev(26) Loc(hold) AT AW  NoBits hps(15) mana(21) SKL/SPL: Shockwave (success +6%) Harm (success +10%) Cond(crumbling - 0 Days)
-            multi_line_name = line.strip('Item:').strip().split(' [')[0].strip()
+            multi_line_name = line.strip('Item:').strip().split(' [')[0].strip('X ').strip()
             multi_line_source_string = raw_string
 
         # check if it's a 2 line auction item
