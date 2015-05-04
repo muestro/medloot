@@ -109,10 +109,16 @@ def remove_noise(input_string):
     return input_string
 
 
-def is_single_line_item(input_string):
-    return "Lev(" in input_string and \
-           "Loc(" in input_string and \
-           "Cond(" in input_string
+def is_single_line_item(input_string, have_name_already=False):
+    if have_name_already:
+        return "Lev(" in input_string and \
+               "Loc(" in input_string and \
+               "Cond(" in input_string
+    else:
+        return " : " in input_string and \
+               "Lev(" in input_string and \
+               "Loc(" in input_string and \
+               "Cond(" in input_string
 
 
 # a massive battleplate - Lev(23) Loc(body) AM AT AW AC-ap(8) AE hps(37) ss(-2) Cond(any day - Egged - fnt grn - 49 Days)

@@ -40,7 +40,7 @@ def parse(input_obj):
             multi_line_source_string = raw_string
 
         # check if it's a 2 line auction item
-        if '***AUCTION:***' in line and 'in slot' in line and 'minimum bid' in line:
+        if ('***AUCTION:***' in line or 'AUCTION:' in line) and 'in slot' in line and 'minimum bid' in line:
             # beginning of an auction line e.g.
             # ***AUCTION:*** an acid hammer in slot B, minimum bid: 1,000,000, auctioneer: Raidain.
             # Lev(27) Loc(wield) AM AC 2H 5d12 NoBits hr(5) dr(5) Cond(pristine - Infinity Days)
@@ -48,7 +48,7 @@ def parse(input_obj):
             multi_line_source_string = raw_string
 
         # Single line processing
-        if medievia.item.parse_single.is_single_line_item(line):
+        if medievia.item.parse_single.is_single_line_item(line, multi_line_name is not None):
             item = medievia.item.parse_single.parse(line, item_name=multi_line_name)
             if item is not None and item.is_populated():
                 if multi_line_source_string:
