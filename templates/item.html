@@ -1,0 +1,20 @@
+{% extends "templates/base.html" %}
+
+{% block title %}Item - {{item_summary.name}}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/ui-darkness/jquery-ui.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="/static/item.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="contentContainer" style="margin-top: 15px;">
+    <div class="statContainer">
+        {% for user in users %}
+
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

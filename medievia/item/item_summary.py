@@ -69,6 +69,10 @@ def _create_item_summary(item):
     return item_summary
 
 
+def get_item_summary(item_summary_url_key):
+    return ndb.Key(urlsafe=item_summary_url_key).get()
+
+
 def create_or_update_item_summary(item):
     # check the database to see if it already exists, if so retrieve it
     item_summary = _get_item_summary_from_db(item.name)

@@ -175,6 +175,10 @@ def get_item(item_key):
     return item
 
 
+def get_all_items(item_summary):
+    return Item.query(Item.summary_item_key == item_summary.key).fetch()
+
+
 def get_key_name(name, affect_strings):
     if affect_strings and len(affect_strings) > 0:
         affect_strings.sort()

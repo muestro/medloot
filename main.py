@@ -79,6 +79,27 @@ class BrowseHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(template_values))
 
 
+class ItemHandler(webapp2.RequestHandler):
+    def get(self, url_key):
+        # get the item summary from the url key
+        item_summary = medievia.item.item_summary.get_item_summary(url_key)
+
+        # get all of the related items from the summary
+        items = medievia.item.item.get_all_items(item_summary)
+
+        template_values = {
+            'is_admin_user': is_admin_user(),
+            'user': users.get_current_user(),
+            'signInUrl': users.create_login_url('/'),
+            'signOutUrl': users.create_logout_url('/'),
+            'itemSummary': item_summary,
+            'items': items
+        }
+
+        template = jinja_environment.get_template('templates/admin/admin.html')
+        self.response.out.write(template.render(template_values))
+
+
 class AdminHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
@@ -411,6 +432,7 @@ app = webapp2.WSGIApplication([
     ('/', HomeHandler),
     ('/search', SearchHandler),
     ('/browse', BrowseHandler),
+    ('/item/([^/]+)', ItemHandler),
     ('/tools/xpxp', ToolsXPXPHandler),
     ('/tools/xpxp/calculate', CalculateXPXPHandler),
     ('/tools/autoquest', ToolsAutoQuestHandler),
