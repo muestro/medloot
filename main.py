@@ -96,7 +96,7 @@ class ItemHandler(webapp2.RequestHandler):
             'items': items
         }
 
-        template = jinja_environment.get_template('templates/admin/admin.html')
+        template = jinja_environment.get_template('templates/item.html')
         self.response.out.write(template.render(template_values))
 
 

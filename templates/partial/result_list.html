@@ -84,7 +84,7 @@
             {% set oIndex = loop.index %}
             <tr id="resultRow{{ oIndex }}-{{ loop.index }}" class="resultRow" rowNum="{{ oIndex }}-{{ loop.index }}">
                 <!-- name -->
-                <td class="nameColumn">{{ item.name }}</td>
+                <td class="nameColumn"><a href="/item/{{ item.key.urlsafe() }}">{{ item.name }}</a></td>
 
                 <!-- level restriction -->
                 <td>{% if item.level_restriction != 0 %}{{ item.level_restriction }}{% else %}<span class="emptyBlock">---</span>{% endif %}</td>

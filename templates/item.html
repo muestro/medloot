@@ -1,6 +1,6 @@
 {% extends "templates/base.html" %}
 
-{% block title %}Item - {{item_summary.name}}{% endblock %}
+{% block title %}Item - {{itemSummary.name}}{% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -16,5 +16,14 @@
 
         {% endfor %}
     </div>
+    <h2>Summary</h2>
+    <p>The summary stuff goes here...</p>
+    <h2>Instances</h2>
+    <ul>
+        {% for item in items %}
+
+        {% endfor %}
+    </ul>
+
 </div>
 {% endblock %}
