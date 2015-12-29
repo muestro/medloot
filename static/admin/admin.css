@@ -3,8 +3,8 @@ body{
     padding: 0px;
 }
 
-.mainContent{
-    /*width: 1495px;*/
+#content{
+    padding-left: 20px;
 }
 
 .leftContent{

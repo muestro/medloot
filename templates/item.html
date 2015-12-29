@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/ui-darkness/jquery-ui.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script src="/static/item.js"></script>
+    <link rel="stylesheet" href="/static/item.css" />
 {% endblock %}
 
 {% block content %}
@@ -21,7 +22,9 @@
     <h2>Instances</h2>
     <ul>
         {% for item in items %}
-
+            <li>
+                <textarea disabled cols="85" rows="20">{{ item.to_string() }}</textarea>
+            </li>
         {% endfor %}
     </ul>
 
