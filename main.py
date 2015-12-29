@@ -14,6 +14,7 @@ from google.appengine.ext.webapp.mail_handlers import InboundMailHandler
 
 import medievia.item.parse
 import medievia.item.item
+import medievia.item.item_base
 import medievia.item.item_summary
 import medievia.search
 import medievia.admin.administrator
@@ -23,6 +24,7 @@ import medievia.xpxp
 
 jinja_environment = jinja2.Environment(autoescape=True,
                                        loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__))))
+
 
 # todo: add auto-complete in search bar
 # re: http://blog.startuptale.com/2012/10/partial-search-on-gae-with-search-api.html
@@ -82,7 +84,7 @@ class BrowseHandler(webapp2.RequestHandler):
 class ItemHandler(webapp2.RequestHandler):
     def get(self, url_key):
         # get the item summary from the url key
-        item_summary = medievia.item.item_summary.get_item_summary(url_key)
+        item_summary = medievia.item.item_base.get_item(url_key)
 
         # get all of the related items from the summary
         items = medievia.item.item.get_all_items(item_summary)
@@ -165,8 +167,8 @@ class AdminAddAdminHandler(webapp2.RequestHandler):
             alias = self.request.get('alias')
             email = self.request.get('email')
             medievia.admin.administrator.create_or_update(medievia.admin.administrator.Administrator(
-                alias=alias,
-                email=email))
+                    alias=alias,
+                    email=email))
             medievia.admin.message.log("Added administrator: {0}.".format(alias))
         else:
             self.abort(401)
@@ -184,11 +186,38 @@ class AdminRemoveAdminHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
+class AdminRemoveItemHandler(webapp2.RequestHandler):
+    def post(self):
+        #todo: need to handle deleting of the last item.
+        if is_admin_user():
+            url_key = self.request.get('url_key')
+            item = medievia.item.item_base.get_item(url_key)
+
+            # for logging
+            deleted_item_name = item.name
+            deleted_item_key = item.key.urlsafe()
+
+            old_item_summary = item.summary_item_key.get()
+
+            # delete the item
+            item.key.delete()
+
+            # rebuild the item summary
+            new_item_summary_url_key = medievia.item.item_summary.rebuild_item_summary(old_item_summary,
+                                                                                       medievia.item.item.get_all_items(
+                                                                                           old_item_summary))
+
+            medievia.admin.message.log("Removed item: {0} ({1})".format(deleted_item_name, deleted_item_key))
+            return self.redirect('/item/' + new_item_summary_url_key)
+        else:
+            self.abort(401)
+
+
 class AdminItemHandler(webapp2.RequestHandler):
     def get(self):
         if is_admin_user():
             item_key = self.request.get('item_key')
-            item = medievia.item.item.get_item(item_key)
+            item = medievia.item.item_base.get_item(item_key)
 
             template_values = {
                 'is_admin_user': is_admin_user(),
@@ -318,7 +347,7 @@ class DirectParseShowResultHandler(webapp2.RequestHandler):
 
                 template = jinja_environment.get_template('templates/admin/fileparse.html')
                 self.response.out.write(template.render(template_values))
-            #else:
+                # else:
                 # return a message saying bad key
 
         else:
@@ -449,6 +478,7 @@ def is_admin_user():
         print e
         return False
 
+
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
     ('/search', SearchHandler),
@@ -462,6 +492,7 @@ app = webapp2.WSGIApplication([
     ('/admin', AdminHandler),
     ('/admin/addadmin', AdminAddAdminHandler),
     ('/admin/removeadmin', AdminRemoveAdminHandler),
+    ('/admin/removeitem', AdminRemoveItemHandler),
 
     # Parse - single item
     ('/admin/singleParse', SingleParseHandler),
