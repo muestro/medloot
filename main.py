@@ -87,13 +87,43 @@ class ItemHandler(webapp2.RequestHandler):
         # get all of the related items from the summary
         items = medievia.item.item.get_all_items(item_summary)
 
+        # build up dictionaries that will hold computed values
+        modifier_computed_values = defaultdict(list)
+        affect_computed_values = defaultdict(list)
+        for min_modifier in item_summary.min_modifiers:
+            modifier_computed_values[min_modifier.name].append(min_modifier.value)
+        for max_modifier in item_summary.min_modifiers:
+            modifier_computed_values[max_modifier.name].append(max_modifier.value)
+        for base_modifier in item_summary.base_modifiers:
+            modifier_computed_values[base_modifier.name].append(base_modifier.value)
+
+        for min_affect in item_summary.min_affects:
+            affect_computed_values[min_affect.name].append(min_affect.value)
+        for max_affect in item_summary.max_affects:
+            affect_computed_values[max_affect.name].append(max_affect.value)
+        for base_affect in item_summary.base_affects:
+            affect_computed_values[base_affect.name].append(base_affect.value)
+
+        # build up dictionaries that will hold individual values
+        modifier_values = defaultdict(list)
+        affect_values = defaultdict(list)
+        for item in items:
+            for modifier in item.modifiers:
+                modifier_values[modifier.name].append(modifier.value)
+            for affect in item.affects:
+                affect_values[affect.name].append(affect.value)
+
         template_values = {
             'is_admin_user': is_admin_user(),
             'user': users.get_current_user(),
             'signInUrl': users.create_login_url('/'),
             'signOutUrl': users.create_logout_url('/'),
             'itemSummary': item_summary,
-            'items': items
+            'items': items,
+            'modifierComputedValues': modifier_computed_values,
+            'affectComputedValues': affect_computed_values,
+            'modifierValues': modifier_values,
+            'affectValues': affect_values
         }
 
         template = jinja_environment.get_template('templates/item.html')

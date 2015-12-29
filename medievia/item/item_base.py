@@ -4,6 +4,9 @@ import medievia.item.focus
 
 
 class ItemBase(ndb.Model):
+    def __init__(self, **kwargs):
+        super(ItemBase, self).__init__(**kwargs)
+
     name = ndb.StringProperty()
     keywords = ndb.StringProperty(repeated=True)
 

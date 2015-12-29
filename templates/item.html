@@ -6,23 +6,54 @@
     {{ super() }}
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/ui-darkness/jquery-ui.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-    <script src="/static/item.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['corechart']}]}"></script>
+
     <link rel="stylesheet" href="/static/item.css" />
+    <script src="/static/item.js"></script>
 {% endblock %}
 
 {% block content %}
 <div class="contentContainer" style="margin-top: 15px;">
-    <div class="statContainer">
-        {% for user in users %}
-
+    <h2>Stats</h2>
+    <ul>
+        {% for key in affectComputedValues %}
+            <li key="{{ key }}">
+                <h3>{{ key }}</h3>
+                <span>MIN: {{ affectComputedValues[key][0] }}</span><br />
+                <span>MAX: {{ affectComputedValues[key][1] }}</span><br />
+                <span>BASE: {{ affectComputedValues[key][2] }}</span><br />
+                <br/>
+                <span>VALUES:</span><br/>
+                {% for value in affectValues[key] %}
+                    <input name="{{ key }}" type="hidden" value="{{ value }}" />
+                {% endfor %}
+                <br />
+                <div id="chart_div_{{ key }}" style="width: 300px; height: 75px;"></div>
+            </li>
         {% endfor %}
-    </div>
-    <h2>Summary</h2>
-    <p>The summary stuff goes here...</p>
-    <h2>Instances</h2>
+
+        {% for key in modifierComputedValues %}
+            <li key="{{ key }}">
+                <h3>{{ key }}</h3>
+                <span>MIN: {{ affectComputedValues[key][0] }}</span><br />
+                <span>MAX: {{ affectComputedValues[key][1] }}</span><br />
+                <span>BASE: {{ affectComputedValues[key][2] }}</span><br />
+                <br/>
+                <span>VALUES:</span><br/>
+                {% for value in affectValues[key] %}
+                    <input name="{{ key }}" type="hidden" value="{{ value }}" />
+                {% endfor %}
+                <br />
+                <div id="chart_div_{{ key }}" style="width: 300px; height: 75px;"></div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Instances Seen</h2>
     <ul>
         {% for item in items %}
             <li>
+                <span>Date added: {{ item.date_created }}</span><br />
                 <textarea disabled cols="85" rows="20">{{ item.to_string() }}</textarea>
             </li>
         {% endfor %}

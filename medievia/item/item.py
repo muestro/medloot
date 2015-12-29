@@ -9,6 +9,9 @@ import hashlib
 # model object
 # noinspection PyTypeChecker
 class Item(medievia.item.item_base.ItemBase):
+    def __init__(self, **kwargs):
+        super(Item, self).__init__(**kwargs)
+
     summary_item_key = ndb.KeyProperty()
 
     days_left = ndb.IntegerProperty()
@@ -29,6 +32,8 @@ class Item(medievia.item.item_base.ItemBase):
     is_expired = ndb.BooleanProperty()
 
     source_string = ''
+
+    date_created = ndb.DateProperty(auto_now_add=True)
 
     def is_populated(self):
         return property_has_value(self.name) and property_has_value(self.keywords) \
