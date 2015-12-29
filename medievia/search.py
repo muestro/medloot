@@ -46,24 +46,6 @@ def _delete_all_in_index(index_name):
         doc_index.delete(document_ids)
 
 
-def run_search(query_string):
-    print "Attempting search: {0}".format(query_string)
-    index = search.Index(name=_main_index)
-
-    query = search.Query(query_string, options=search.QueryOptions(limit=1000))
-
-    results = index.search(query)
-
-    items = []
-    for result in results:
-        # convert search indexed documents into model objects
-        item = medievia.item.get_item(result.doc_id)
-        items.append(item)
-
-    print "Found {0} result(s).".format(results.number_found)
-    return items
-
-
 def index_count():
     index = search.Index(name=_main_index)
     query = search.Query(" ", options=search.QueryOptions(limit=1000, returned_fields="name",

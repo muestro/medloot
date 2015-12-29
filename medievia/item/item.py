@@ -59,7 +59,7 @@ class Item(medievia.item.item_base.ItemBase):
         # days left
         if self.days_left is not None:
             if self.days_left == -1:
-                output = output + "Days Left: Infinity\n"
+                output += "Days Left: Infinity\n"
             else:
                 output = output + "Days Left: {0}\n".format(self.days_left)
 
@@ -98,13 +98,13 @@ class Item(medievia.item.item_base.ItemBase):
 
         # affects
         if self.affects and self.affects > 0:
-            output = output + "Affects:\n"
+            output += "Affects:\n"
             for affect in self.affects:
                 output = output + affect.to_string()
 
         # modifiers
         if self.modifiers and self.modifiers > 0:
-            output = output + "Skill/Spell Modifiers: \n"
+            output += "Skill/Spell Modifiers: \n"
             for modifier in self.modifiers:
                 output = output + modifier.to_string()
 
@@ -164,12 +164,6 @@ def create_or_update_item(item, item_summary):
     return True
 
 
-def delete_item(key):
-    if key is None:
-        return
-    key.delete()
-
-
 def get_item_count():
     q = Item.query()
     return q.count()
@@ -184,10 +178,4 @@ def get_all_items(item_summary):
     return Item.query(Item.summary_item_key == item_summary.key).fetch()
 
 
-def get_key_name(name, affect_strings):
-    if affect_strings and len(affect_strings) > 0:
-        affect_strings.sort()
-        hash_string = name + "|" + "|".join(affect_strings)
-    else:
-        hash_string = name
-    return hashlib.md5(hash_string).hexdigest()
+

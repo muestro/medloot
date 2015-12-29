@@ -159,15 +159,6 @@ class AdminHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
-class AdminUpdateIndexesHandler(webapp2.RequestHandler):
-    def post(self):
-        if is_admin_user():
-            medievia.search.update_indexes()
-            medievia.admin.message.log("Index has been updated.")
-        else:
-            self.abort(401)
-
-
 class AdminAddAdminHandler(webapp2.RequestHandler):
     def post(self):
         if is_admin_user():
@@ -469,7 +460,6 @@ app = webapp2.WSGIApplication([
     ('/tools/ctmap', ToolsCTMapHandler),
 
     ('/admin', AdminHandler),
-    ('/admin/updateIndexes', AdminUpdateIndexesHandler),
     ('/admin/addadmin', AdminAddAdminHandler),
     ('/admin/removeadmin', AdminRemoveAdminHandler),
 

@@ -73,12 +73,7 @@ def get_item_summary(item_summary_url_key):
     return ndb.Key(urlsafe=item_summary_url_key).get()
 
 
-def create_or_update_item_summary(item):
-    # check the database to see if it already exists, if so retrieve it
-    item_summary = _get_item_summary_from_db(item.name)
-    if item_summary is None:
-        item_summary = _create_item_summary(item)
-
+def _update_item_summary_with_item(item_summary, item):
     # for each property set its min max and base
     for modifier in item.modifiers:
         # get the existing min/max/base values from the summary item.  if they're not there then we'll create new ones
@@ -136,8 +131,37 @@ def create_or_update_item_summary(item):
         if item.is_expired:
             base_prop.value = medievia.item.affect.get_better_affect(affect, base_prop).value
 
+
+def create_or_update_item_summary(item):
+    # check the database to see if it already exists, if so retrieve it
+    item_summary = _get_item_summary_from_db(item.name)
+    if item_summary is None:
+        item_summary = _create_item_summary(item)
+
+    _update_item_summary_with_item(item_summary, item)
+
     item_summary.put()
     return item_summary
+
+
+def rebuild_item_summary(items):
+    # todo put these multiple database calls into a single transaction
+    old_item_summary = _get_item_summary_from_db(items[0].name)
+
+    item_summary = ItemSummary()
+
+    # build the new item summary one item at a time then save to the database
+    for item in items:
+        _update_item_summary_with_item(item_summary, item)
+    item_summary.put()
+
+    # update the existing items to point at the new item summary
+    for item in items:
+        item.summary_item_key = item_summary.key
+        item.put()
+
+    # remove the old item summary from the database
+    old_item_summary.key.delete()
 
 
 # attempts to find the existing property from the summary item.
