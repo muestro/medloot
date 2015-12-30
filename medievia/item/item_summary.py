@@ -69,10 +69,6 @@ def _create_item_summary(item):
     return item_summary
 
 
-def get_item_summary(item_summary_url_key):
-    return ndb.Key(urlsafe=item_summary_url_key).get()
-
-
 def _update_item_summary_with_item(item_summary, item):
     # for each property set its min max and base
     for modifier in item.modifiers:

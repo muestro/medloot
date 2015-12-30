@@ -93,11 +93,11 @@ class ItemHandler(webapp2.RequestHandler):
         modifier_computed_values = defaultdict(list)
         affect_computed_values = defaultdict(list)
         for min_modifier in item_summary.min_modifiers:
-            modifier_computed_values[min_modifier.name].append(min_modifier.value)
+            modifier_computed_values[min_modifier.display_name()].append(min_modifier.value)
         for max_modifier in item_summary.min_modifiers:
-            modifier_computed_values[max_modifier.name].append(max_modifier.value)
+            modifier_computed_values[max_modifier.display_name()].append(max_modifier.value)
         for base_modifier in item_summary.base_modifiers:
-            modifier_computed_values[base_modifier.name].append(base_modifier.value)
+            modifier_computed_values[base_modifier.display_name()].append(base_modifier.value)
 
         for min_affect in item_summary.min_affects:
             affect_computed_values[min_affect.name].append(min_affect.value)
@@ -111,7 +111,7 @@ class ItemHandler(webapp2.RequestHandler):
         affect_values = defaultdict(list)
         for item in items:
             for modifier in item.modifiers:
-                modifier_values[modifier.name].append(modifier.value)
+                modifier_values[modifier.display_name()].append(modifier.value)
             for affect in item.affects:
                 affect_values[affect.name].append(affect.value)
 

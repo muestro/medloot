@@ -25,3 +25,6 @@ class Modifier(ndb.Model):
         return self.name == modifier2.name and \
             self.descriptor == modifier2.descriptor and \
             self.value == modifier2.value
+
+    def display_name(self):
+        return "{0} ({1})".format(self.name, self.descriptor)

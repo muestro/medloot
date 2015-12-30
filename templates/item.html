@@ -35,12 +35,12 @@
         {% for key in modifierComputedValues %}
             <li key="{{ key }}">
                 <h3>{{ key }}</h3>
-                <span>MIN: {{ affectComputedValues[key][0] }}</span><br />
-                <span>MAX: {{ affectComputedValues[key][1] }}</span><br />
-                <span>BASE: {{ affectComputedValues[key][2] }}</span><br />
+                <span>MIN: {{ modifierComputedValues[key][0] }}</span><br />
+                <span>MAX: {{ modifierComputedValues[key][1] }}</span><br />
+                <span>BASE: {{ modifierComputedValues[key][2] }}</span><br />
                 <br/>
                 <span>VALUES:</span><br/>
-                {% for value in affectValues[key] %}
+                {% for value in modifierValues[key] %}
                     <input name="{{ key }}" type="hidden" value="{{ value }}" />
                 {% endfor %}
                 <br />

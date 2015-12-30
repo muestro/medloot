@@ -73,3 +73,6 @@ def copy_attributes(from_item, to_item):
     to_item.ac_apply = from_item.ac_apply
     to_item.spells = from_item.spells
 
+
+def get_item(item_url_key):
+    return ndb.Key(urlsafe=item_url_key).get()
