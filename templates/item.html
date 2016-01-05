@@ -49,12 +49,20 @@
         {% endfor %}
     </ul>
 
-    <h2>Instances Seen</h2>
+    <h2>Individual Items</h2>
     <ul>
         {% for item in items %}
             <li>
                 <span>Date added: {{ item.date_created }}</span><br />
+                {% if is_admin_user %}
+                    <form action="/admin/removeitem" method="post">
+                        <input type="hidden" name="url_key" value="{{ item.key.urlsafe() }}" />
+                        <span>(admin-only) Delete item from database: </span><button name="deleteItemButton" value="{{ item.key.urlsafe() }}">Delete</button><br/>
+                    </form>
+                {% endif %}
+            <p>
                 <textarea disabled cols="85" rows="20">{{ item.to_string() }}</textarea>
+            </p>
             </li>
         {% endfor %}
     </ul>

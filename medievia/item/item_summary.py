@@ -140,24 +140,24 @@ def create_or_update_item_summary(item):
     return item_summary
 
 
-def rebuild_item_summary(items):
+def rebuild_item_summary(old_item_summary, items):
     # todo put these multiple database calls into a single transaction
-    old_item_summary = _get_item_summary_from_db(items[0].name)
-
-    item_summary = ItemSummary()
+    seed_item = items[0]
+    new_item_summary = _create_item_summary(seed_item)
 
     # build the new item summary one item at a time then save to the database
     for item in items:
-        _update_item_summary_with_item(item_summary, item)
-    item_summary.put()
+        _update_item_summary_with_item(new_item_summary, item)
+    new_item_summary.put()
 
     # update the existing items to point at the new item summary
     for item in items:
-        item.summary_item_key = item_summary.key
+        item.summary_item_key = new_item_summary.key
         item.put()
 
     # remove the old item summary from the database
     old_item_summary.key.delete()
+    return new_item_summary.key.urlsafe()
 
 
 # attempts to find the existing property from the summary item.

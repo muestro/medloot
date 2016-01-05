@@ -169,11 +169,6 @@ def get_item_count():
     return q.count()
 
 
-def get_item(item_key):
-    item = item_key.get()
-    return item
-
-
 def get_all_items(item_summary):
     return Item.query(Item.summary_item_key == item_summary.key).fetch()
 
