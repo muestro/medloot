@@ -18,6 +18,8 @@ def parse(input_obj):
     stale_count = 0
 
     for line in input_obj:
+        line = re.sub('^[0-9][0-9]:[0-9][0-9]:[0-9][0-9] ', '', line)
+
         raw_string = line.decode('utf-8', 'ignore')
         line_not_stale = False
 

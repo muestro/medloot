@@ -2,6 +2,7 @@ import os
 import time
 import urllib
 import json
+import re
 import logging
 from collections import defaultdict
 
@@ -416,6 +417,32 @@ class FileParseUploadHandler(webapp2.RequestHandler):
             self.abort(401)
 
 
+class RemoteItemUploadHandler(webapp2.RequestHandler):
+    def post(self):
+        if is_admin_user(self.request.remote_addr):
+            try:
+                # get the post body
+                blobdata = (x.group(0) for x in re.finditer('(.*\n|.+$)', self.request.get('itemdata')))
+
+                # run it through the item parser
+                items = medievia.item.parse.parse(blobdata)
+
+                new_count = 0
+                dup_count = 0
+
+                # for each item create an item summary and upload to database
+                for item in items:
+                    item_summary = medievia.item.item_summary.create_or_update_item_summary(item)
+                    if medievia.item.item.create_or_update_item(item, item_summary):
+                        new_count += 1
+                    else:
+                        dup_count += 1
+
+                medievia.admin.message.log("Uploaded new items: {0} (new); {1} (duplicates)".format(new_count, dup_count))
+            except Exception as e:
+                self.abort(400)
+
+
 class ToolsXPXPHandler(webapp2.RequestHandler):
     def get(self):
         template_values = {
@@ -466,13 +493,16 @@ class MailHandler(InboundMailHandler):
         logging.info("Received a message from: " + mail_message.sender)
 
 
-def is_admin_user():
+def is_admin_user(remote_ip=''):
     try:
         user = users.get_current_user()
         if user:
             email = user.email()
             return medievia.admin.administrator.is_admin(email) or users.is_current_user_admin()
         else:
+            # check to see if the user is coming from a trusted IP address
+            if remote_ip == '191.233.89.94' or remote_ip == '127.0.0.1':
+                return True
             return False
     except Exception as e:
         print e
@@ -509,5 +539,8 @@ app = webapp2.WSGIApplication([
     ('/admin/fileUpload/callback', FileUploadCallbackHandler),
     ('/admin/fileParse/upload', FileParseUploadHandler),
     ('/admin/fileParse/([^/]+)?', FileParseBlobHandler),
+
+    # Remote - item upload
+    ('/remote/upload', RemoteItemUploadHandler),
 
     ('/admin/item', AdminItemHandler)], debug=True)

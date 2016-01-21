@@ -15,11 +15,14 @@ def log(message_string):
     if message_string is None:
         return
 
-    admin = administrator.get(email=users.get_current_user().email())
-    if admin:
-        owner = admin.alias
+    if users.get_current_user() is not None:
+        admin = administrator.get(email=users.get_current_user().email())
+        if admin:
+            owner = admin.alias
+        else:
+            owner = "Admin"
     else:
-        owner = "Admin"
+        owner = "Anonymous"
 
     message = Message()
     message.message = message_string
