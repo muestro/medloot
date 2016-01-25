@@ -440,6 +440,7 @@ class RemoteItemUploadHandler(webapp2.RequestHandler):
 
                 medievia.admin.message.log("Uploaded new items: {0} (new); {1} (duplicates)".format(new_count, dup_count))
             except Exception as e:
+                logging.exception(e.message)
                 self.abort(400)
 
 
