@@ -193,7 +193,7 @@ def _parse_days_left(input_string, item):
             item.days_left = -1
             item.is_expired = True
         else:
-            item.days_left = int(input_string.split("Days Left:")[1].strip())
+            item.days_left = int(float(input_string.split("Days Left:")[1].strip()))
         return True
     else:
         return False
